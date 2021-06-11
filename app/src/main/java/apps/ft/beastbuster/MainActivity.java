@@ -1,5 +1,6 @@
 package apps.ft.beastbuster;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import com.google.android.gms.ads.AdRequest;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.view.KeyEvent;
 import android.view.View;
 
 import android.view.Menu;
@@ -531,6 +533,7 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 Button btn2 = (Button) findViewById(R.id.btn_gun);
                 btn2.setText("PLAY");
+                btn2.setTextColor(Color.parseColor("gray"));
                 if (screen_type == 2) btn2.setBackgroundResource(R.drawable.btn_round2);
                 else                   btn2.setBackgroundResource(R.drawable.btn_round);
                 break;
@@ -762,4 +765,96 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.v("LifeCycle", "------------------------------>onResume");
+
+        //センサ関連
+/*        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
+ */
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.v("LifeCycle", "------------------------------>onPause");
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        Log.v("LifeCycle", "------------------------------>onRestart");
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.v("LifeCycle", "------------------------------>onStop");
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.v("LifeCycle", "------------------------------>onDestroy");
+
+        //センサ関連
+/*        if(sensorManager != null) {
+            sensorManager.unregisterListener(this);
+        }*/
+        //カメラ
+        if (mCameraManager != null)
+        {
+            mCameraManager = null;
+        }
+/*        if (camera != null) {
+            //カメラデバイス動作停止
+            camera.stopPreview();
+            //カメラデバイス解放
+            camera.release();
+            camera = null;
+        }*/
+
+        /* 音量の戻しの処理 */
+        if (volume_back == true) {
+//      if (volume_back == true && user_lv >= 5) {
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            am.setStreamVolume(AudioManager.STREAM_MUSIC, now_volume, 0);
+            am = null;
+        }
+    }
+
+    //  戻るボタン
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            // 戻るボタンの処理
+            // ダイアログ表示など特定の処理を行いたい場合はここに記述
+            // 親クラスのdispatchKeyEvent()を呼び出さずにtrueを返す
+            if (this.mainTimer1 == null && this.mainTimer2 == null && this.mainTimer3 == null) {
+                /* そのまま終了へ */
+            }
+            else {
+                AlertDialog.Builder ad = new AlertDialog.Builder(this);
+                if (_language.equals("ja")) {
+                    ad.setTitle("[戻る]は操作無効です");
+                    ad.setMessage("\n\n再生を停止した後\n操作が有効になります\n\n\n\n\n");
+                } else if (_language.equals("zh")) {
+                    ad.setTitle("\n\n停止播放后\n手术将是有效的");
+                    ad.setMessage("\n\n按[HOME]按钮\n\n\n\n\n");
+                } else if (_language.equals("ko")) {
+                    ad.setTitle("뒤로 버튼 조작 유효하지 않습니다");
+                    ad.setMessage("\n\n재생을 정지 한 뒤\n조작이 활성화됩니다\n\n\n\n\n");
+                } else {
+                    ad.setTitle("Invalid operation");
+                    ad.setMessage("\n\nAfter stopping playback.\nThe operation will be effective.\n\n\n\n\n");
+                }
+                ad.setPositiveButton("ＯＫ", null);
+                ad.show();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }
