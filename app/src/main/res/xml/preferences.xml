@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/preference_title" >
+
+    <ListPreference
+        android:key="play_volume"
+        android:title="@string/play_volume_title"
+        android:summary="@string/play_volume_summary"
+        android:entries="@array/play_volume_entries_list"
+        android:entryValues="@array/play_volume_entryvalues_list"
+        android:dialogTitle="@string/play_volume_dialog" />
+
+    <ListPreference
+        android:key="play_delay"
+        android:title="@string/play_delay_title"
+        android:summary="@string/play_delay_summary"
+        android:entries="@array/play_delay_entries_list"
+        android:entryValues="@array/play_delay_entryvalues_list"
+        android:dialogTitle="@string/play_delay_dialog" />
+
+    <ListPreference
+        android:key="emergency_kind"
+        android:title="@string/emergency_title"
+        android:summary="@string/emergency_summary"
+        android:entries="@array/emergency_entries_list"
+        android:entryValues="@array/emergency_entryvalues_list"
+        android:dialogTitle="@string/emergency_dialog" />
+
+     <ListPreference
+        android:key="bell_kind"
+        android:title="@string/bell_kind_title"
+        android:summary="@string/bell_kind_summary"
+        android:entries="@array/bell_kind_entries_list"
+        android:entryValues="@array/bell_kind_entryvalues_list"
+        android:dialogTitle="@string/bell_kind_dialog" />
+
+     <ListPreference
+        android:key="gun_kind"
+        android:title="@string/gun_kind_title"
+        android:summary="@string/gun_kind_summary"
+        android:entries="@array/gun_kind_entries_list"
+        android:entryValues="@array/gun_kind_entryvalues_list"
+        android:dialogTitle="@string/gun_kind_dialog" />
+
+    <ListPreference
+        android:key="thunder_kind"
+        android:title="@string/thunder_kind_title"
+        android:summary="@string/thunder_kind_summary"
+        android:entries="@array/thunder_kind_entries_list"
+        android:entryValues="@array/thunder_kind_entryvalues_list"
+        android:dialogTitle="@string/thunder_kind_dialog" />
+
+    <CheckBoxPreference
+        android:key="volume_back"
+        android:title="@string/volumeback_title"
+        android:summary="@string/volumeback_summary" />
+
+    <ListPreference
+        android:key="screen_type"
+        android:title="@string/screen_type_title"
+        android:summary="@string/screen_type_summary"
+        android:entries="@array/screen_type_entries_list"
+        android:entryValues="@array/screen_type_entryvalues_list"
+        android:dialogTitle="@string/screen_type_dialog" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

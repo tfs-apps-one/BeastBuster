@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">獣除け</string>
+    <string name="action_settings">設定</string>
+    <string name="preference_title">設定一覧</string>
+
+    <string name="play_delay_title">連続再生間隔</string>
+    <string name="play_delay_summary">連続再生間隔を設定して下さい</string>
+    <string name="play_delay_dialog">連続再生時間\n（次に再生するまでの時間）</string>
+
+    <string-array name="play_delay_entries_list">
+        <item> 0秒後</item>
+        <item> 1秒後</item>
+        <item> 3秒後</item>
+        <item> 5秒後</item>
+        <item> 7秒後</item>
+        <item>10秒後</item>
+        <item>15秒後</item>
+        <item>20秒後</item>
+        <item>30秒後</item>
+    </string-array>
+    <string-array name="play_delay_entryvalues_list">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
+    <string name="play_volume_title">音量</string>
+    <string name="play_volume_summary">音量を設定して下さい</string>
+    <string name="play_volume_dialog">音量設定（15段階）</string>
+
+    <string-array name="play_volume_entries_list">
+        <item>1(端末最小)</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15(端末最大)</item>
+    </string-array>
+    <string-array name="play_volume_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+    </string-array>
+
+    <string name="emergency_title">緊急再生音</string>
+    <string name="emergency_summary">緊急再生音を選択して下さい\n携帯を左右に50度振って再生します</string>
+    <string name="emergency_dialog">緊急再生音選択</string>
+
+    <string-array name="emergency_entries_list">
+        <item>なし</item>
+        <item>鈴音</item>
+        <item>銃声</item>
+        <item>雷鳴</item>
+    </string-array>
+    <string-array name="emergency_entryvalues_list">
+        <item>none</item>
+        <item>bell</item>
+        <item>gun</item>
+        <item>thunder</item>
+    </string-array>
+
+    <string name="bell_kind_title">鈴音</string>
+    <string name="bell_kind_summary">鈴音種類を選択して下さい</string>
+    <string name="bell_kind_dialog">鈴音</string>
+
+    <string-array name="bell_kind_entries_list">
+        <item>鈴音1</item>
+        <item>鈴音2</item>
+        <item>鈴音3</item>
+    </string-array>
+    <string-array name="bell_kind_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="gun_kind_title">銃声</string>
+    <string name="gun_kind_summary">銃声種類を選択して下さい</string>
+    <string name="gun_kind_dialog">銃声</string>
+
+    <string-array name="gun_kind_entries_list">
+        <item>銃声1</item>
+        <item>銃声2</item>
+        <item>銃声3</item>
+    </string-array>
+    <string-array name="gun_kind_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="thunder_kind_title">雷鳴</string>
+    <string name="thunder_kind_summary">雷鳴種類を選択して下さい</string>
+    <string name="thunder_kind_dialog">雷鳴</string>
+
+    <string-array name="thunder_kind_entries_list">
+        <item>雷鳴1</item>
+        <item>雷鳴2</item>
+        <item>雷鳴3</item>
+    </string-array>
+    <string-array name="thunder_kind_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="volumeback_title">音量戻し機能</string>
+    <string name="volumeback_summary">アプリ終了時に元の音量に戻す</string>
+
+    <string name="screen_type_title">画面タイプ</string>
+    <string name="screen_type_summary">画面タイプを選択して下さい</string>
+    <string name="screen_type_dialog">画面タイプ</string>
+
+    <string-array name="screen_type_entries_list">
+        <item>デフォルト</item>
+        <item>シンプルグレイ</item>
+    </string-array>
+    <string-array name="screen_type_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>

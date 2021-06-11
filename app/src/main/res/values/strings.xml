@@ -1,0 +1,158 @@
+<resources>
+    <string name="app_name">BeastBuster</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="preference_title">Setting list</string>
+
+    <string name="play_delay_title">Continuous playback interval</string>
+    <string name="play_delay_summary">Please set the continuous playback interval</string>
+    <string name="play_delay_dialog">Continuous playback time</string>
+
+    <string-array name="play_delay_entries_list">
+        <item> 0 seconds later</item>
+        <item> 1 seconds later</item>
+        <item> 3 seconds later</item>
+        <item> 5 seconds later</item>
+        <item> 7 seconds later</item>
+        <item>10 seconds later</item>
+        <item>15 seconds later</item>
+        <item>20 seconds later</item>
+        <item>3 seconds later</item>
+    </string-array>
+    <string-array name="play_delay_entryvalues_list">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
+    <string name="play_volume_title">volume</string>
+    <string name="play_volume_summary">Please set the volume</string>
+    <string name="play_volume_dialog">Volume setting�i15steps�j</string>
+
+    <string-array name="play_volume_entries_list">
+        <item>1(min)</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15(max)</item>
+    </string-array>
+    <string-array name="play_volume_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+    </string-array>
+
+    <string name="emergency_title">Emergency reproduction sound</string>
+    <string name="emergency_summary">Please select emergency sound reproduction\nShake your phone 50 degrees to the left and right to play</string>
+    <string name="emergency_dialog">Emergency playback sound selection</string>
+
+    <string-array name="emergency_entries_list">
+        <item>none</item>
+        <item>bell</item>
+        <item>gunshot</item>
+        <item>thunder</item>
+    </string-array>
+    <string-array name="emergency_entryvalues_list">
+        <item>none</item>
+        <item>bell</item>
+        <item>gun</item>
+        <item>thunder</item>
+    </string-array>
+
+    <string name="bell_kind_title">bell</string>
+    <string name="bell_kind_summary">Please select bell type</string>
+    <string name="bell_kind_dialog">bell</string>
+
+    <string-array name="bell_kind_entries_list">
+        <item>bell 1</item>
+        <item>bell 2</item>
+        <item>bell 3</item>
+    </string-array>
+    <string-array name="bell_kind_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="gun_kind_title">gunshot</string>
+    <string name="gun_kind_summary">Please select gunshot type</string>
+    <string name="gun_kind_dialog">gunshot</string>
+
+    <string-array name="gun_kind_entries_list">
+        <item>gunshot 1</item>
+        <item>gunshot 2</item>
+        <item>gunshot 3</item>
+    </string-array>
+    <string-array name="gun_kind_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="thunder_kind_title">thunder</string>
+    <string name="thunder_kind_summary">Please select thunder type</string>
+    <string name="thunder_kind_dialog">thunder</string>
+
+    <string-array name="thunder_kind_entries_list">
+        <item>thunder 1</item>
+        <item>thunder 2</item>
+        <item>thunder 3</item>
+    </string-array>
+    <string-array name="thunder_kind_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string name="volumeback_title">Volume return function</string>
+    <string name="volumeback_summary">Restore the original volume at the end of the application</string>
+
+    <string name="screen_type_title">Screen type</string>
+    <string name="screen_type_summary">Please select Screen type</string>
+    <string name="screen_type_dialog">Screen type</string>
+
+    <string-array name="screen_type_entries_list">
+        <item>Default</item>
+        <item>Simple gray</item>
+    </string-array>
+    <string-array name="screen_type_entryvalues_list">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+</resources>
