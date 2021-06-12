@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -12,20 +13,22 @@
     android:background="@drawable/bak_grad">
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="5dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:gravity="center_horizontal"
-        android:textSize="30dp" />
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center|top"
+        android:text="----"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout5" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -53,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/btn_round"
+            android:backgroundTint="@null"
             android:onClick="onBell"
             android:text="PLAY"
             android:textSize="45dp" />
@@ -85,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/btn_round"
+            android:backgroundTint="@null"
             android:onClick="onGun"
             android:text="PLAY"
             android:textSize="45dp" />
@@ -117,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/btn_round"
+            android:backgroundTint="@null"
             android:onClick="onThunder"
             android:text="PLAY"
             android:textSize="45dp" />
@@ -145,21 +148,28 @@
             android:layout_marginLeft="1dp"
             android:layout_marginTop="1dp"
             android:layout_marginEnd="1dp"
-            android:layout_toEndOf="@+id/btn_video"
-            android:background="@drawable/btn_state"
             android:onClick="onEmergency"
             android:text="EMERGENCY"
-            android:textSize="30dp" />
+            android:textSize="25dp" />
     </LinearLayout>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
+    <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-4924620089567925/6361767912"></com.google.android.gms.ads.AdView>
+        android:layout_height="match_parent"
+        android:gravity="center|bottom"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-4924620089567925/6361767912"></com.google.android.gms.ads.AdView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
