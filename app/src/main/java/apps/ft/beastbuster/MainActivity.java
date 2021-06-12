@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         _language = _local.getLanguage();
         _country = _local.getCountry();
 
+        setContentView(R.layout.content_main);
         TextView v = (TextView)findViewById(R.id.textView);
         if (_language.equals("ja")) {
             v.setText("[PLAY]で通常再生します");
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
         if(play_delay == 0) play_delay = 10;
         else                 play_delay *= 1000;
         //緊急音
-        emergency_kind = sharedPreferences.getString("emergency_kind", "none");
+        emergency_kind = sharedPreferences.getString("emergency_kind", "thunder");
         //音量戻し
         volume_back = sharedPreferences.getBoolean("volume_back", false);
         //画面タイプ
@@ -310,44 +311,54 @@ public class MainActivity extends AppCompatActivity {
         Button btn1 = (Button) findViewById(R.id.btn_bell);
         Button btn2 = (Button) findViewById(R.id.btn_gun);
         Button btn3 = (Button) findViewById(R.id.btn_thunder);
+        Button btn4 = (Button) findViewById(R.id.btn_emergency);
         if (this.mainTimer1 == null) {
             btn1.setText("PLAY");
             btn1.setTextColor(Color.parseColor("gray"));
-            if (screen_type == 2) btn1.setBackgroundResource(R.drawable.btn_round2);
-            else                   btn1.setBackgroundResource(R.drawable.btn_round);
+            //画面デザイン　色変更
+            if (screen_type == 2)   btn1.setBackgroundColor(0xfffafafa);
+            else                    btn1.setBackgroundColor(0xffc0ffff);
         }
         else
         {
             btn1.setText("STOP");
             btn1.setTextColor(Color.parseColor("gray"));
-            btn1.setBackgroundResource(R.drawable.btn_stop);
+            btn1.setBackgroundColor(0xffd3d3d3);
         }
         if (this.mainTimer2 == null) {
             btn2.setText("PLAY");
             btn2.setTextColor(Color.parseColor("gray"));
-            btn2.setBackgroundResource(R.drawable.btn_round);
+            if (screen_type == 2)   btn2.setBackgroundColor(0xfffafafa);
+            else                    btn2.setBackgroundColor(0xffc0ffff);
+            /*
             if (screen_type == 2) btn2.setBackgroundResource(R.drawable.btn_round2);
             else                   btn2.setBackgroundResource(R.drawable.btn_round);
+            */
         }
         else
         {
             btn2.setText("STOP");
             btn2.setTextColor(Color.parseColor("gray"));
+            btn2.setBackgroundColor(0xffd3d3d3);
+            /*
             btn2.setBackgroundResource(R.drawable.btn_stop);
+             */
         }
         if (this.mainTimer3 == null) {
             btn3.setText("PLAY");
             btn3.setTextColor(Color.parseColor("gray"));
-            btn3.setBackgroundResource(R.drawable.btn_round);
-            if (screen_type == 2) btn3.setBackgroundResource(R.drawable.btn_round2);
-            else                   btn3.setBackgroundResource(R.drawable.btn_round);
+            if (screen_type == 2)   btn3.setBackgroundColor(0xfffafafa);
+            else                    btn3.setBackgroundColor(0xffc0ffff);
         }
         else
         {
             btn3.setText("STOP");
             btn3.setTextColor(Color.parseColor("gray"));
-            btn3.setBackgroundResource(R.drawable.btn_stop);
+            btn3.setBackgroundColor(0xffd3d3d3);
         }
+
+        /* 緊急ボタン */
+        btn4.setBackgroundColor(0xfff08080);
     }
 
     /* 効果音スタート */
@@ -359,36 +370,34 @@ public class MainActivity extends AppCompatActivity {
         Button btn3 = (Button) findViewById(R.id.btn_thunder);
         btn1.setText("PLAY");
         btn1.setTextColor(Color.parseColor("gray"));
-        if (screen_type == 2) btn1.setBackgroundResource(R.drawable.btn_round2);
-        else                   btn1.setBackgroundResource(R.drawable.btn_round);
+        if (screen_type == 2)   btn1.setBackgroundColor(0xfffafafa);
+        else                    btn1.setBackgroundColor(0xffc0ffff);
 
         btn2.setText("PLAY");
         btn2.setTextColor(Color.parseColor("gray"));
-        btn2.setBackgroundResource(R.drawable.btn_round);
-        if (screen_type == 2) btn2.setBackgroundResource(R.drawable.btn_round2);
-        else                   btn2.setBackgroundResource(R.drawable.btn_round);
+        if (screen_type == 2)   btn2.setBackgroundColor(0xfffafafa);
+        else                    btn2.setBackgroundColor(0xffc0ffff);
 
         btn3.setText("PLAY");
         btn3.setTextColor(Color.parseColor("gray"));
-        btn3.setBackgroundResource(R.drawable.btn_round);
-        if (screen_type == 2) btn3.setBackgroundResource(R.drawable.btn_round2);
-        else                   btn3.setBackgroundResource(R.drawable.btn_round);
+        if (screen_type == 2)   btn3.setBackgroundColor(0xfffafafa);
+        else                    btn3.setBackgroundColor(0xffc0ffff);
 
         switch (type){
             case 1:
                 btn1.setText("STOP");
                 btn1.setTextColor(Color.parseColor("gray"));
-                btn1.setBackgroundResource(R.drawable.btn_stop);
+                btn1.setBackgroundColor(0xffd3d3d3);
                 break;
             case 2:
                 btn2.setText("STOP");
                 btn2.setTextColor(Color.parseColor("gray"));
-                btn2.setBackgroundResource(R.drawable.btn_stop);
+                btn2.setBackgroundColor(0xffd3d3d3);
                 break;
             case 3:
                 btn3.setText("STOP");
                 btn3.setTextColor(Color.parseColor("gray"));
-                btn3.setBackgroundResource(R.drawable.btn_stop);
+                btn3.setBackgroundColor(0xffd3d3d3);
                 break;
         }
 
@@ -527,22 +536,22 @@ public class MainActivity extends AppCompatActivity {
                 Button btn1 = (Button) findViewById(R.id.btn_bell);
                 btn1.setText("PLAY");
                 btn1.setTextColor(Color.parseColor("gray"));
-                if (screen_type == 2) btn1.setBackgroundResource(R.drawable.btn_round2);
-                else                   btn1.setBackgroundResource(R.drawable.btn_round);
+                if (screen_type == 2)   btn1.setBackgroundColor(0xfffafafa);
+                else                    btn1.setBackgroundColor(0xffc0ffff);
                 break;
             case 2:
                 Button btn2 = (Button) findViewById(R.id.btn_gun);
                 btn2.setText("PLAY");
                 btn2.setTextColor(Color.parseColor("gray"));
-                if (screen_type == 2) btn2.setBackgroundResource(R.drawable.btn_round2);
-                else                   btn2.setBackgroundResource(R.drawable.btn_round);
+                if (screen_type == 2)   btn2.setBackgroundColor(0xfffafafa);
+                else                    btn2.setBackgroundColor(0xffc0ffff);
                 break;
             case 3:
                 Button btn3 = (Button) findViewById(R.id.btn_thunder);
                 btn3.setText("PLAY");
                 btn3.setTextColor(Color.parseColor("gray"));
-                if (screen_type == 2) btn3.setBackgroundResource(R.drawable.btn_round2);
-                else                   btn3.setBackgroundResource(R.drawable.btn_round);
+                if (screen_type == 2)   btn3.setBackgroundColor(0xfffafafa);
+                else                    btn3.setBackgroundColor(0xffc0ffff);
                 break;
         }
 
