@@ -58,8 +58,9 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 
-public class MainActivity extends AppCompatActivity {
-//public class MainActivity extends AppCompatActivity implements SensorEventListener {
+//public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements SensorEventListener {
 
     private MediaPlayer bgm;
     private int now_volume;
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     private String emergency_kind = "";
     private boolean volume_back = false;
     //ライト関連
-//    private Camera camera = null;
     private CameraManager mCameraManager;
     private String mCameraId = null;
     private boolean isOn = false;
@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         _language = _local.getLanguage();
         _country = _local.getCountry();
 
-        setContentView(R.layout.content_main);
         TextView v = (TextView)findViewById(R.id.textView);
         if (_language.equals("ja")) {
             v.setText("[PLAY]で通常再生します");
@@ -472,10 +471,7 @@ public class MainActivity extends AppCompatActivity {
 
         //音量調整
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        // 現在の音量を取得する
-//        int ringVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-//        int ringMaxVolume = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        // 音量を設定する
+       // 音量を設定する
         am.setStreamVolume(AudioManager.STREAM_MUSIC, sound_volume, 0);
 
 /*        if (bgm.isPlaying() == false) {
@@ -657,7 +653,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*
     @Override
     public void onSensorChanged(SensorEvent event) {
         switch(event.sensor.getType()){
@@ -685,7 +680,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    */
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
 
 
     /**
@@ -780,9 +779,8 @@ public class MainActivity extends AppCompatActivity {
         Log.v("LifeCycle", "------------------------------>onResume");
 
         //センサ関連
-/*        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
- */
     }
 
     @Override
@@ -817,13 +815,6 @@ public class MainActivity extends AppCompatActivity {
         {
             mCameraManager = null;
         }
-/*        if (camera != null) {
-            //カメラデバイス動作停止
-            camera.stopPreview();
-            //カメラデバイス解放
-            camera.release();
-            camera = null;
-        }*/
 
         /* 音量の戻しの処理 */
         if (volume_back == true) {
