@@ -34,7 +34,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="105dp"
+        android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textView"
         android:layout_marginBottom="5dp"
@@ -47,7 +47,7 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="105dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:background="#999999"
             android:src="@drawable/bell" />
@@ -66,7 +66,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="105dp"
+        android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/linearLayout"
         android:layout_marginBottom="5dp"
@@ -79,7 +79,7 @@
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="105dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:background="#999999"
             android:src="@drawable/gun" />
@@ -98,7 +98,7 @@
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="105dp"
+        android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/linearLayout2"
         android:layout_marginBottom="5dp"
@@ -111,7 +111,7 @@
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="105dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:background="#999999"
             android:src="@drawable/thunder" />
