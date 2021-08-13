@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity
         _country = _local.getCountry();
 
         TextView v = (TextView)findViewById(R.id.textView);
+        v.setBackgroundTintList(null);
         if (_language.equals("ja")) {
             v.setText("[PLAY]で通常再生します");
         }
@@ -140,7 +141,10 @@ public class MainActivity extends AppCompatActivity
             v.setText("Please press [PLAY]");
         }
         v.setTextColor(Color.parseColor("black"));
+        /*
         v.setBackgroundColor(Color.parseColor("white"));
+         */
+        v.setBackgroundResource(R.drawable.bak_grad);
 
         //音
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -311,53 +315,75 @@ public class MainActivity extends AppCompatActivity
         Button btn2 = (Button) findViewById(R.id.btn_gun);
         Button btn3 = (Button) findViewById(R.id.btn_thunder);
         Button btn4 = (Button) findViewById(R.id.btn_emergency);
+
+        btn1.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn2.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn3.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn4.setBackgroundTintList(null);   //マテリアルデザインの無効
+
         if (this.mainTimer1 == null) {
             btn1.setText("PLAY");
             btn1.setTextColor(Color.parseColor("gray"));
             //画面デザイン　色変更
+            /*
             if (screen_type == 2)   btn1.setBackgroundColor(0xfffafafa);
             else                    btn1.setBackgroundColor(0xffc0ffff);
+            */
+            if (screen_type == 2)   btn1.setBackgroundResource(R.drawable.btn_round2);
+            else                    btn1.setBackgroundResource(R.drawable.btn_round);
         }
         else
         {
             btn1.setText("STOP");
             btn1.setTextColor(Color.parseColor("gray"));
-            btn1.setBackgroundColor(0xffd3d3d3);
+            /*btn1.setBackgroundColor(0xffd3d3d3);
+             */
+            btn1.setBackgroundResource(R.drawable.btn_stop);
         }
         if (this.mainTimer2 == null) {
             btn2.setText("PLAY");
             btn2.setTextColor(Color.parseColor("gray"));
+            /*
             if (screen_type == 2)   btn2.setBackgroundColor(0xfffafafa);
             else                    btn2.setBackgroundColor(0xffc0ffff);
-            /*
-            if (screen_type == 2) btn2.setBackgroundResource(R.drawable.btn_round2);
-            else                   btn2.setBackgroundResource(R.drawable.btn_round);
             */
+            if (screen_type == 2)   btn2.setBackgroundResource(R.drawable.btn_round2);
+            else                    btn2.setBackgroundResource(R.drawable.btn_round);
         }
         else
         {
             btn2.setText("STOP");
             btn2.setTextColor(Color.parseColor("gray"));
-            btn2.setBackgroundColor(0xffd3d3d3);
             /*
+            btn2.setBackgroundColor(0xffd3d3d3);
+            */
             btn2.setBackgroundResource(R.drawable.btn_stop);
-             */
         }
         if (this.mainTimer3 == null) {
             btn3.setText("PLAY");
             btn3.setTextColor(Color.parseColor("gray"));
+            /*
             if (screen_type == 2)   btn3.setBackgroundColor(0xfffafafa);
             else                    btn3.setBackgroundColor(0xffc0ffff);
+             */
+            if (screen_type == 2)   btn3.setBackgroundResource(R.drawable.btn_round2);
+            else                    btn3.setBackgroundResource(R.drawable.btn_round);
         }
         else
         {
             btn3.setText("STOP");
             btn3.setTextColor(Color.parseColor("gray"));
+            /*
             btn3.setBackgroundColor(0xffd3d3d3);
+            */
+            btn3.setBackgroundResource(R.drawable.btn_stop);
         }
 
         /* 緊急ボタン */
+        /*
         btn4.setBackgroundColor(0xfff08080);
+         */
+        btn4.setBackgroundResource(R.drawable.btn_emer);
     }
 
     /* 効果音スタート */
@@ -367,36 +393,66 @@ public class MainActivity extends AppCompatActivity
         Button btn1 = (Button) findViewById(R.id.btn_bell);
         Button btn2 = (Button) findViewById(R.id.btn_gun);
         Button btn3 = (Button) findViewById(R.id.btn_thunder);
+
+        btn1.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn2.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn3.setBackgroundTintList(null);   //マテリアルデザインの無効
+
         btn1.setText("PLAY");
         btn1.setTextColor(Color.parseColor("gray"));
+        /*
         if (screen_type == 2)   btn1.setBackgroundColor(0xfffafafa);
         else                    btn1.setBackgroundColor(0xffc0ffff);
+        */
+        if (screen_type == 2)   btn1.setBackgroundResource(R.drawable.btn_round2);
+        else                    btn1.setBackgroundResource(R.drawable.btn_round);
 
         btn2.setText("PLAY");
         btn2.setTextColor(Color.parseColor("gray"));
+        /*
         if (screen_type == 2)   btn2.setBackgroundColor(0xfffafafa);
         else                    btn2.setBackgroundColor(0xffc0ffff);
+         */
+        if (screen_type == 2)   btn2.setBackgroundResource(R.drawable.btn_round2);
+        else                    btn2.setBackgroundResource(R.drawable.btn_round);
 
         btn3.setText("PLAY");
         btn3.setTextColor(Color.parseColor("gray"));
+        /*
         if (screen_type == 2)   btn3.setBackgroundColor(0xfffafafa);
         else                    btn3.setBackgroundColor(0xffc0ffff);
+         */
+        if (screen_type == 2)   btn3.setBackgroundResource(R.drawable.btn_round2);
+        else                    btn3.setBackgroundResource(R.drawable.btn_round);
+
+        btn1.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn2.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn3.setBackgroundTintList(null);   //マテリアルデザインの無効
 
         switch (type){
             case 1:
                 btn1.setText("STOP");
                 btn1.setTextColor(Color.parseColor("gray"));
+                /*
                 btn1.setBackgroundColor(0xffd3d3d3);
+                 */
+                btn1.setBackgroundResource(R.drawable.btn_stop);
                 break;
             case 2:
                 btn2.setText("STOP");
                 btn2.setTextColor(Color.parseColor("gray"));
+                /*
                 btn2.setBackgroundColor(0xffd3d3d3);
+                 */
+                btn2.setBackgroundResource(R.drawable.btn_stop);
                 break;
             case 3:
                 btn3.setText("STOP");
                 btn3.setTextColor(Color.parseColor("gray"));
+                /*
                 btn3.setBackgroundColor(0xffd3d3d3);
+                 */
+                btn3.setBackgroundResource(R.drawable.btn_stop);
                 break;
         }
 
@@ -480,9 +536,9 @@ public class MainActivity extends AppCompatActivity
             isplaying = true;
         }*/
 
+        TextView v = (TextView) findViewById(R.id.textView);
+        v.setBackgroundTintList(null);
         if (mode == 1) {
-            TextView v = (TextView) findViewById(R.id.textView);
-
             if (_language.equals("ja")) {
                 v.setText("緊急時の再生中です");
             }
@@ -496,12 +552,12 @@ public class MainActivity extends AppCompatActivity
                 v.setText("Playing in emergency");
             }
             v.setTextColor(Color.parseColor("red"));
+            /*
             v.setBackgroundColor(Color.parseColor("white"));
+             */
         }
         else{
             light_OFF();
-
-            TextView v = (TextView) findViewById(R.id.textView);
             if (_language.equals("ja")) {
                 v.setText("通常再生中です");
 //                v.setText("通常再生中です\n(繰り返し連続再生)");
@@ -519,8 +575,11 @@ public class MainActivity extends AppCompatActivity
                 v.setText("Normal playback is in progress");
             }
             v.setTextColor(Color.parseColor("blue"));
+            /*
             v.setBackgroundColor(Color.parseColor("white"));
+             */
         }
+        v.setBackgroundResource(R.drawable.bak_grad);
     }
 
     /* 効果音ストップ */
@@ -530,24 +589,39 @@ public class MainActivity extends AppCompatActivity
         switch (type){
             case 1:
                 Button btn1 = (Button) findViewById(R.id.btn_bell);
+                btn1.setBackgroundTintList(null);
                 btn1.setText("PLAY");
                 btn1.setTextColor(Color.parseColor("gray"));
+                /*
                 if (screen_type == 2)   btn1.setBackgroundColor(0xfffafafa);
                 else                    btn1.setBackgroundColor(0xffc0ffff);
+                 */
+                if (screen_type == 2)   btn1.setBackgroundResource(R.drawable.btn_round2);
+                else                    btn1.setBackgroundResource(R.drawable.btn_round);
                 break;
             case 2:
                 Button btn2 = (Button) findViewById(R.id.btn_gun);
+                btn2.setBackgroundTintList(null);
                 btn2.setText("PLAY");
                 btn2.setTextColor(Color.parseColor("gray"));
+                /*
                 if (screen_type == 2)   btn2.setBackgroundColor(0xfffafafa);
                 else                    btn2.setBackgroundColor(0xffc0ffff);
+                 */
+                if (screen_type == 2)   btn2.setBackgroundResource(R.drawable.btn_round2);
+                else                    btn2.setBackgroundResource(R.drawable.btn_round);
                 break;
             case 3:
                 Button btn3 = (Button) findViewById(R.id.btn_thunder);
+                btn3.setBackgroundTintList(null);
                 btn3.setText("PLAY");
                 btn3.setTextColor(Color.parseColor("gray"));
+                /*
                 if (screen_type == 2)   btn3.setBackgroundColor(0xfffafafa);
                 else                    btn3.setBackgroundColor(0xffc0ffff);
+                */
+                if (screen_type == 2)   btn3.setBackgroundResource(R.drawable.btn_round2);
+                else                    btn3.setBackgroundResource(R.drawable.btn_round);
                 break;
         }
 
@@ -567,6 +641,7 @@ public class MainActivity extends AppCompatActivity
         this.light_OFF();
 
         TextView v = (TextView)findViewById(R.id.textView);
+        v.setBackgroundTintList(null);
         if (_language.equals("ja")) {
             v.setText("再生を中止しました");
         }
@@ -580,7 +655,10 @@ public class MainActivity extends AppCompatActivity
             v.setText("Playback was canceled");
         }
         v.setTextColor(Color.parseColor("white"));
+        /*
         v.setBackgroundColor(Color.parseColor("gray"));
+         */
+        v.setBackgroundResource(R.drawable.bak_grad2);
     }
 
     //  「ベル」ボタン
