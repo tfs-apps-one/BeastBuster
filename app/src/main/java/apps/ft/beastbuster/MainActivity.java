@@ -3,6 +3,7 @@ package apps.ft.beastbuster;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -110,9 +111,18 @@ public class MainActivity extends AppCompatActivity
     private String _country;
     // DB
     public MyOpenHelper helper;
-    private int user_lv = 0;
+    private int db_user_lv = 0; //ユーザーレベル
+    private int db_data1 = 0;   //再生回数
+    private int db_data2 = 0;
+    private int db_data3 = 0;
+    private int db_data4 = 0;
+    private int db_data5 = 0;
+
+    final int PLAY_INIT_COUNT = 450;    //30分程度
+
     // 広告
     private AdView mAdview;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +189,9 @@ public class MainActivity extends AppCompatActivity
         sql.append(" level");
         sql.append(" ,data1");
         sql.append(" ,data2");
+        sql.append(" ,data3");
+        sql.append(" ,data4");
+        sql.append(" ,data5");
         sql.append(" FROM appinfo;");
         try {
             Cursor cursor = db.rawQuery(sql.toString(), null);
@@ -198,7 +211,7 @@ public class MainActivity extends AppCompatActivity
             long ret;
             /* 新規レコード追加 */
             ContentValues insertValues = new ContentValues();
-            user_lv = 1;
+            db_user_lv = 1;
             insertValues.put("level", 1);
             insertValues.put("data1", 0);
             insertValues.put("data2", 0);
@@ -216,7 +229,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
             }
         } else {
-            user_lv = data;
+            db_user_lv = data;
             /*            Toast.makeText(this, "Data Loading...  Access Level:" + user_lv, Toast.LENGTH_SHORT).show();*/
         }
     }
@@ -224,7 +237,13 @@ public class MainActivity extends AppCompatActivity
     public void AppDBUpdated() {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues insertValues = new ContentValues();
-        insertValues.put("level", user_lv);
+        insertValues.put("level", db_user_lv);
+        insertValues.put("data1", db_data1);
+        insertValues.put("data2", db_data2);
+        insertValues.put("data3", db_data3);
+        insertValues.put("data4", db_data4);
+        insertValues.put("data5", db_data5);
+
         int ret;
         try {
             ret = db.update("appinfo", insertValues, null, null);
@@ -287,7 +306,7 @@ public class MainActivity extends AppCompatActivity
         helper = new MyOpenHelper(this);
         AppDBInitRoad();
 
-/*        if (user_lv < 5)
+/*        if (db_user_lv < 5)
         {
             screen_type = 1;
         }*/
@@ -315,11 +334,14 @@ public class MainActivity extends AppCompatActivity
         Button btn2 = (Button) findViewById(R.id.btn_gun);
         Button btn3 = (Button) findViewById(R.id.btn_thunder);
         Button btn4 = (Button) findViewById(R.id.btn_emergency);
+        Button btn5 = (Button) findViewById(R.id.btn_tips);
 
         btn1.setBackgroundTintList(null);   //マテリアルデザインの無効
         btn2.setBackgroundTintList(null);   //マテリアルデザインの無効
         btn3.setBackgroundTintList(null);   //マテリアルデザインの無効
         btn4.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn5.setBackgroundTintList(null);   //マテリアルデザインの無効
+        btn5.setBackgroundResource(R.drawable.btn_tips);
 
         if (this.mainTimer1 == null) {
             btn1.setText("PLAY");
@@ -709,6 +731,87 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    // TIPS処理
+    public void onTips(View view) {
+        // 再生中
+        if (this.mainTimer1 != null || this.mainTimer2 != null ||
+            this.mainTimer3 != null || emergency_playing == true ){
+            /* 何もしない */
+        }
+        // 全て停止中
+        else{
+            PresentPopup();
+        }
+    }
+
+    // プレゼント処理
+    public void PresentPopup(){
+        AlertDialog.Builder guide = new AlertDialog.Builder(this);
+        TextView vmessage = new TextView(this);
+        int level = 0;
+        String pop_message = "";
+        String btn_yes = "";
+        String btn_no = "";
+
+        //ユーザーレベル算出
+
+        if (_language.equals("ja")) {
+
+            pop_message += "\n\n 動画を視聴してポイントをGETしますか？" +
+                    "\n\n（ポイントをGETするとアプリ機能が追加します）" +
+                    "\n　１回視聴：アプリ起動時の自動ON" +
+                    "\n　２回視聴：画面タイプ「色：灰」追加"+
+                    "\n　３回視聴：画面タイプ「色：橙」追加"+
+                    "\n 　現在のポイント「"+db_data1+"」→「"+level+"」"+"\n \n\n\n";
+
+            btn_yes += "視聴";
+            btn_no += "中止";
+        }
+        else{
+            pop_message += "\n\n \n" +
+                    "Do you want to watch the video and get POINTS ?" +
+                    "\n\n\n App function will be added when you get POINTS." +
+                    "\nExample: Automatic ON function, screen type."+
+                    "\n\n POINTS「"+db_data1+"」→「"+level+"」"+"\n \n\n\n";
+
+            btn_yes += "YES";
+            btn_no += "N O";
+        }
+
+        //メッセージ
+        vmessage.setText(pop_message);
+        vmessage.setBackgroundColor(Color.DKGRAY);
+        vmessage.setTextColor(Color.WHITE);
+
+        //タイトル
+        guide.setTitle("TIPS");
+        guide.setIcon(R.drawable.present);
+        guide.setView(vmessage);
+
+        guide.setPositiveButton(btn_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                /*
+                if (mRewardedVideoAd.isLoaded()) {
+                    mRewardedVideoAd.show();
+                }
+                */
+                //test_make
+//                    db_data1++;
+            }
+        });
+        guide.setNegativeButton(btn_no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ImageShow();
+            }
+        });
+
+        guide.create();
+        guide.show();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -896,7 +999,7 @@ public class MainActivity extends AppCompatActivity
 
         /* 音量の戻しの処理 */
         if (volume_back == true) {
-//      if (volume_back == true && user_lv >= 5) {
+//      if (volume_back == true && db_user_lv >= 5) {
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             am.setStreamVolume(AudioManager.STREAM_MUSIC, now_volume, 0);
             am = null;
