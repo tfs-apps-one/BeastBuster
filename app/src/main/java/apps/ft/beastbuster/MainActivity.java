@@ -28,6 +28,7 @@ import android.widget.Button;
 //タイマースレッド
 import java.io.IOException;
 import java.security.Policy;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -122,7 +123,10 @@ public class MainActivity extends AppCompatActivity
 
 //test_make
 //    final int PLAY_INIT_COUNT = 450;    //30分程度
-    final int PLAY_INIT_COUNT = 5;    //30分程度
+    final int PLAY_INIT_COUNT = 5;      //30分程度
+    final int PLAY_1800 = 1800;         //2H
+    final int PLAY_4500 = 4500;         //5H
+    final int PLAY_9000 = 9000;         //10H
 
     private int playcount = 0;  //繰り返し再生回数
 
@@ -157,9 +161,6 @@ public class MainActivity extends AppCompatActivity
             v.setText("Please press [PLAY]");
         }
         v.setTextColor(Color.parseColor("black"));
-        /*
-        v.setBackgroundColor(Color.parseColor("white"));
-         */
         v.setBackgroundResource(R.drawable.bak_grad);
 
         //音
@@ -183,86 +184,6 @@ public class MainActivity extends AppCompatActivity
         mAdview.loadAd(adRequest);
     }
 
-    /* DB初期設定 */
-    public void AppDBInitRoad() {
-        int data = 0;
-        int data2 = 0;
-        int data3 = 0;
-
-        SQLiteDatabase db = helper.getReadableDatabase();
-        StringBuilder sql = new StringBuilder();
-        sql.append(" SELECT");
-        sql.append(" level");
-        sql.append(" ,data1");
-        sql.append(" ,data2");
-        sql.append(" ,data3");
-        sql.append(" ,data4");
-        sql.append(" ,data5");
-        sql.append(" FROM appinfo;");
-        try {
-            Cursor cursor = db.rawQuery(sql.toString(), null);
-            //TextViewに表示
-            StringBuilder text = new StringBuilder();
-            if (cursor.moveToNext()) {
-                data = cursor.getInt(0);
-                data2 = cursor.getInt(1);
-                data3 = cursor.getInt(2);
-            }
-        } finally {
-            db.close();
-        }
-
-        db = helper.getWritableDatabase();
-        if (data == 0) {
-            long ret;
-            /* 新規レコード追加 */
-            ContentValues insertValues = new ContentValues();
-            db_user_lv = 1;
-            insertValues.put("level", 1);
-            insertValues.put("data1", 0);
-            insertValues.put("data2", 0);
-            insertValues.put("data3", 0);
-            insertValues.put("data4", 0);
-            insertValues.put("data5", 0);
-            try {
-                ret = db.insert("appinfo", null, insertValues);
-            } finally {
-                db.close();
-            }
-            if (ret == -1) {
-                Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            db_user_lv = data;
-            /*            Toast.makeText(this, "Data Loading...  Access Level:" + user_lv, Toast.LENGTH_SHORT).show();*/
-        }
-    }
-    /* DB更新 */
-    public void AppDBUpdated() {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        ContentValues insertValues = new ContentValues();
-        insertValues.put("level", db_user_lv);
-        insertValues.put("data1", db_data1);
-        insertValues.put("data2", db_data2);
-        insertValues.put("data3", db_data3);
-        insertValues.put("data4", db_data4);
-        insertValues.put("data5", db_data5);
-
-        int ret;
-        try {
-            ret = db.update("appinfo", insertValues, null, null);
-        } finally {
-            db.close();
-        }
-        if (ret == -1){
-            Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Saving.... OK ", Toast.LENGTH_SHORT).show();
-        }
-
-    }
     @Override
     public void onStart() {
         super.onStart();
@@ -318,6 +239,8 @@ public class MainActivity extends AppCompatActivity
         }*/
 
 //test_make
+        //TODO:
+        getNowDate();
         db_data1 = PLAY_INIT_COUNT;
 
         ImageShow();
@@ -398,8 +321,11 @@ public class MainActivity extends AppCompatActivity
         TextView text_prog = (TextView) findViewById(R.id.text_progress);
         temp_prog = ((db_data1 - playcount) * 100) / db_data1;
 
-        text_prog.setText("Remaining :"+temp_prog+"%"+"\n("+(db_data1-playcount)+" / "+db_data1+")");
-
+        if (_language.equals("ja")) {
+            text_prog.setText("連続再生(残)：" + temp_prog + "%" + "\n(" + (db_data1 - playcount) + " / " + db_data1 + ")");
+        }else {
+            text_prog.setText("Remaining :" + temp_prog + "%" + "\n(" + (db_data1 - playcount) + " / " + db_data1 + ")");
+        }
         LinearLayout lay_normal_61 = (LinearLayout)findViewById(R.id.linearLayout61);
         lay_normal_61.setBackgroundTintList(null);   //マテリアルデザインの無効
         lay_normal_61.setBackgroundResource(R.drawable.bak_grad);
@@ -564,15 +490,12 @@ public class MainActivity extends AppCompatActivity
             light_OFF();
             if (_language.equals("ja")) {
                 v.setText("通常再生中です");
-//                v.setText("通常再生中です\n(繰り返し連続再生)");
             }
             else if (_language.equals("zh")) {
                 v.setText("它是在正常的时间正在播放");
-//                v.setText("它是在正常的时间正在播放\n(重复连续播放)");
             }
             else if (_language.equals("ko")) {
                 v.setText("보통 때 재생 중입니다");
-//                v.setText("보통 때 재생 중입니다\n(반복 재생)");
             }
             else
             {
@@ -781,6 +704,143 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    public void TimeUpPopup(){
+        AlertDialog.Builder guide = new AlertDialog.Builder(this);
+        TextView vmessage = new TextView(this);
+        int level = 0;
+        String pop_title = "";
+        String pop_message = "";
+        String btn_yes = "";
+        String btn_no = "";
+
+        //ユーザーレベル算出
+
+        if (_language.equals("ja")) {
+
+            pop_title += "連続再生を停止しました";
+            pop_message += "\n\n" +
+                    "継続する場合は「PLAY」を押して下さい" +
+                    "\n\n\n連続再生回数を増やす場合は「TIPS」を確認下さい" +
+                    "\n\n\n※現在の連続再生回数 : "+db_data1+"回"+"\n\n\n\n";
+
+            btn_yes += "確認";
+        }
+        else{
+            pop_title += "Continuous playback has stopped !!";
+            pop_message += "\n\n" +
+                    "Press [PLAY] to continue." +
+                    "\n\n\nPlease check [TIPS] to increase the continuous playback COUNT." +
+                    "\n\n\nCurrent COUNT  [ "+db_data1+" ]"+"\n\n\n\n";
+
+            btn_yes += "O K";
+        }
+
+        //メッセージ
+        vmessage.setText(pop_message);
+        vmessage.setBackgroundColor(Color.DKGRAY);
+        vmessage.setTextColor(Color.WHITE);
+        vmessage.setTextSize(17);
+
+        //タイトル
+        guide.setTitle(pop_title);
+        guide.setIcon(R.drawable.present);
+        guide.setView(vmessage);
+
+        guide.setPositiveButton(btn_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ImageShow();
+            }
+        });
+
+        guide.create();
+        guide.show();
+    }
+
+    /**
+     *  DB（データベース）関連の処理
+     *
+     */
+    /* DB初期設定 */
+    public void AppDBInitRoad() {
+        int data = 0;
+        int data2 = 0;
+        int data3 = 0;
+
+        SQLiteDatabase db = helper.getReadableDatabase();
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT");
+        sql.append(" level");
+        sql.append(" ,data1");
+        sql.append(" ,data2");
+        sql.append(" ,data3");
+        sql.append(" ,data4");
+        sql.append(" ,data5");
+        sql.append(" FROM appinfo;");
+        try {
+            Cursor cursor = db.rawQuery(sql.toString(), null);
+            //TextViewに表示
+            StringBuilder text = new StringBuilder();
+            if (cursor.moveToNext()) {
+                data = cursor.getInt(0);
+                data2 = cursor.getInt(1);
+                data3 = cursor.getInt(2);
+            }
+        } finally {
+            db.close();
+        }
+
+        db = helper.getWritableDatabase();
+        if (data == 0) {
+            long ret;
+            /* 新規レコード追加 */
+            ContentValues insertValues = new ContentValues();
+            db_user_lv = 1;
+            insertValues.put("level", 1);
+            insertValues.put("data1", 0);
+            insertValues.put("data2", 0);
+            insertValues.put("data3", 0);
+            insertValues.put("data4", 0);
+            insertValues.put("data5", 0);
+            try {
+                ret = db.insert("appinfo", null, insertValues);
+            } finally {
+                db.close();
+            }
+            if (ret == -1) {
+                Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            db_user_lv = data;
+            /*            Toast.makeText(this, "Data Loading...  Access Level:" + user_lv, Toast.LENGTH_SHORT).show();*/
+        }
+    }
+    /* DB更新 */
+    public void AppDBUpdated() {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues insertValues = new ContentValues();
+        insertValues.put("level", db_user_lv);
+        insertValues.put("data1", db_data1);
+        insertValues.put("data2", db_data2);
+        insertValues.put("data3", db_data3);
+        insertValues.put("data4", db_data4);
+        insertValues.put("data5", db_data5);
+
+        int ret;
+        try {
+            ret = db.update("appinfo", insertValues, null, null);
+        } finally {
+            db.close();
+        }
+        if (ret == -1){
+            Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Saving.... OK ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -835,6 +895,22 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     * 日付取得処理
+     *
+     */
+    public void getNowDate() {
+        Calendar cal = Calendar.getInstance();
+        int temp_date = 0;
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        temp_date += year*10000;
+        temp_date += month*100;
+        temp_date += day;
+        Toast.makeText(this, "date="+temp_date, Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * タイマータスク派生クラス
@@ -862,7 +938,7 @@ public class MainActivity extends AppCompatActivity
                             ImageShow();
                             // タイムアップのダイアログ表示
                             // TODO:
-
+                            TimeUpPopup();
                         }
                     }
                 }
