@@ -39,7 +39,7 @@
 
     <string name="play_volume_title">volume</string>
     <string name="play_volume_summary">Please set the volume</string>
-    <string name="play_volume_dialog">Volume setting�i15steps�j</string>
+    <string name="play_volume_dialog">Volume setting(15 levels)</string>
 
     <string-array name="play_volume_entries_list">
         <item>1(min)</item>

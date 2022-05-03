@@ -47,6 +47,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -118,7 +120,11 @@ public class MainActivity extends AppCompatActivity
     private int db_data4 = 0;
     private int db_data5 = 0;
 
-    final int PLAY_INIT_COUNT = 450;    //30分程度
+    //test_make
+//    final int PLAY_INIT_COUNT = 450;    //30分程度
+    final int PLAY_INIT_COUNT = 5;    //30分程度
+
+    private int playcount = 0;  //繰り返し再生回数
 
     // 広告
     private AdView mAdview;
@@ -310,6 +316,10 @@ public class MainActivity extends AppCompatActivity
         {
             screen_type = 1;
         }*/
+
+        //test_make
+        db_data1 = PLAY_INIT_COUNT;
+
         ImageShow();
     }
     public void ImageShow()
@@ -406,10 +416,29 @@ public class MainActivity extends AppCompatActivity
         btn4.setBackgroundColor(0xfff08080);
          */
         btn4.setBackgroundResource(R.drawable.btn_emer);
+
+        int temp_prog = 0;
+        TextView text_prog = (TextView) findViewById(R.id.text_progress);
+        temp_prog = ((db_data1 - playcount) * 100) / db_data1;
+
+        text_prog.setText("Remaining :"+temp_prog+"%"+"\n("+(db_data1-playcount)+" / "+db_data1+")");
+
+        LinearLayout lay_normal_61 = (LinearLayout)findViewById(R.id.linearLayout61);
+        lay_normal_61.setBackgroundTintList(null);   //マテリアルデザインの無効
+        lay_normal_61.setBackgroundResource(R.drawable.bak_grad);
+
+        ProgressBar prog = (ProgressBar) findViewById(R.id.progress);
+        prog.setMin(0);
+        prog.setMax(100);
+        prog.setProgress(temp_prog);
     }
 
     /* 効果音スタート */
     public void soundStart(int type, int mode){
+
+        //繰り返し再生回数をゼロにリセット
+        playcount = 0;
+
         ImageShow();
 
         Button btn1 = (Button) findViewById(R.id.btn_bell);
@@ -877,15 +906,26 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void run() {
             //ここに定周期で実行したい処理を記述します
-            mHandler.post( new Runnable() {
+            mHandler.post(new Runnable() {
                 public void run() {
                     //BGMタイマー起動
-                    countText.start();
+                    if (countText.isPlaying() == false) {
+                        playcount++;
+                        if (playcount <= db_data1){
+                            countText.start();
+                        }
+                        else {
+                            playcount = 0;
+                            soundStop(1);
+                            soundStop(2);
+                            soundStop(3);
+                        }
+                        ImageShow();
+                    }
                 }
             });
         }
     }
-
     /**
      * タイマータスク派生クラス
      * run()に定周期で処理したい内容を記述
