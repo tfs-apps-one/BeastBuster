@@ -11,6 +11,10 @@ import android.os.Bundle;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -64,7 +68,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 //public class MainActivity extends AppCompatActivity {
 public class MainActivity extends AppCompatActivity
-        implements SensorEventListener {
+        implements SensorEventListener, RewardedVideoAdListener {
 
     private MediaPlayer bgm;
     private int now_volume;
@@ -122,8 +126,8 @@ public class MainActivity extends AppCompatActivity
     private int db_data5 = 0;
 
 //test_make
-//    final int PLAY_INIT_COUNT = 450;    //30分程度
-    final int PLAY_INIT_COUNT = 5;      //30分程度
+    final int PLAY_INIT_COUNT = 450;    //30分程度
+//    final int PLAY_INIT_COUNT = 5;      //30分程度
     final int PLAY_1800 = 1800;         //2H
     final int PLAY_4500 = 4500;         //5H
     final int PLAY_9000 = 9000;         //10H
@@ -133,6 +137,19 @@ public class MainActivity extends AppCompatActivity
     // 広告
     private AdView mAdview;
 
+    // リワード広告
+    private RewardedVideoAd mRewardedVideoAd;
+    /*
+    // テストID
+    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+    // テストID(APPは本物でOK)
+    private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
+     */
+
+    // 本物
+    private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
+    // 本物
+    private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +199,88 @@ public class MainActivity extends AppCompatActivity
         mAdview = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdview.loadAd(adRequest);
+
+        // リワード広告
+        MobileAds.initialize(this, APP_ID);
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        mRewardedVideoAd.setRewardedVideoAdListener(this);
+        loadRewardedVideoAd();
     }
+
+    /**
+      リワード広告処理
+      *
+    */
+    private void loadRewardedVideoAd() {
+        mRewardedVideoAd.loadAd(AD_UNIT_ID,new AdRequest.Builder().build());
+    }
+
+    @Override
+    public void onRewarded(RewardItem reward) {
+        // Reward the user.
+
+        // 再生回数のセット
+        int tmp_data = db_data1;
+        switch (tmp_data){
+            case PLAY_INIT_COUNT:   db_data1 = PLAY_1800;   break;
+            case PLAY_1800:         db_data1 = PLAY_4500;   break;
+            case PLAY_4500:         db_data1 = PLAY_9000;   break;
+            default:                db_data1 = PLAY_9000;   break;
+        }
+
+        // 動画視聴の日付
+        db_data2 = getNowDate();
+
+
+        //ユーザーレベルアップ
+        if (_language.equals("ja")) {
+            Toast.makeText(this, "連続回数UP!：" + (tmp_data) + "  → " + (db_data1), Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "COUNT UP!：" + (tmp_data) + "  → " + (db_data1), Toast.LENGTH_SHORT).show();
+        }
+        AppDBUpdated();
+        ImageShow();
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+        /*
+        Toast.makeText(this, "onRewardedVideoAdLeftApplication",
+                Toast.LENGTH_SHORT).show();
+         */
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+//        Toast.makeText(this, "onRewardedVideoAdClosed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int errorCode) {
+//        Toast.makeText(this, "onRewardedVideoAdFailedToLoad err="+errorCode, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoAdLoaded() {
+//        Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+//        Toast.makeText(this, "onRewardedVideoAdOpened", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoStarted() {
+//        Toast.makeText(this, "onRewardedVideoStarted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRewardedVideoCompleted() {
+//        Toast.makeText(this, "onRewardedVideoCompleted", Toast.LENGTH_SHORT).show();
+    }
+
 
     @Override
     public void onStart() {
@@ -238,10 +336,10 @@ public class MainActivity extends AppCompatActivity
             screen_type = 1;
         }*/
 
-//test_make
         //TODO:
-        getNowDate();
-        db_data1 = PLAY_INIT_COUNT;
+        if (db_data1 == 0) {
+            db_data1 = PLAY_INIT_COUNT;
+        }
 
         ImageShow();
     }
@@ -683,11 +781,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                /*
                 if (mRewardedVideoAd.isLoaded()) {
                     mRewardedVideoAd.show();
                 }
-                */
                 //test_make
 //                    db_data1++;
             }
@@ -743,7 +839,7 @@ public class MainActivity extends AppCompatActivity
 
         //タイトル
         guide.setTitle(pop_title);
-        guide.setIcon(R.drawable.present);
+        guide.setIcon(R.drawable.timeup);
         guide.setView(vmessage);
 
         guide.setPositiveButton(btn_yes, new DialogInterface.OnClickListener() {
@@ -764,6 +860,7 @@ public class MainActivity extends AppCompatActivity
     /* DB初期設定 */
     public void AppDBInitRoad() {
         int data = 0;
+        int data1 = 0;
         int data2 = 0;
         int data3 = 0;
 
@@ -783,8 +880,9 @@ public class MainActivity extends AppCompatActivity
             StringBuilder text = new StringBuilder();
             if (cursor.moveToNext()) {
                 data = cursor.getInt(0);
-                data2 = cursor.getInt(1);
-                data3 = cursor.getInt(2);
+                data1 = cursor.getInt(1);
+                data2 = cursor.getInt(2);
+                data3 = cursor.getInt(3);
             }
         } finally {
             db.close();
@@ -807,14 +905,19 @@ public class MainActivity extends AppCompatActivity
             } finally {
                 db.close();
             }
+            /*
             if (ret == -1) {
                 Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
             }
+             */
         } else {
             db_user_lv = data;
-            /*            Toast.makeText(this, "Data Loading...  Access Level:" + user_lv, Toast.LENGTH_SHORT).show();*/
+            db_data1 = data1;
+            db_data2 = data2;
+            db_data3 = data3;
+            /*  Toast.makeText(this, "Data Loading...  Access Level:" + user_lv, Toast.LENGTH_SHORT).show();*/
         }
     }
     /* DB更新 */
@@ -834,11 +937,13 @@ public class MainActivity extends AppCompatActivity
         } finally {
             db.close();
         }
+        /*
         if (ret == -1){
             Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Saving.... OK ", Toast.LENGTH_SHORT).show();
         }
+         */
     }
 
     @Override
@@ -899,7 +1004,7 @@ public class MainActivity extends AppCompatActivity
      * 日付取得処理
      *
      */
-    public void getNowDate() {
+    public int getNowDate() {
         Calendar cal = Calendar.getInstance();
         int temp_date = 0;
         int year = cal.get(Calendar.YEAR);
@@ -909,7 +1014,8 @@ public class MainActivity extends AppCompatActivity
         temp_date += year*10000;
         temp_date += month*100;
         temp_date += day;
-        Toast.makeText(this, "date="+temp_date, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "date="+temp_date, Toast.LENGTH_SHORT).show();
+        return temp_date;
     }
 
     /**
@@ -1021,12 +1127,17 @@ public class MainActivity extends AppCompatActivity
         //センサ関連
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
+        //動画
+        mRewardedVideoAd.resume(this);
     }
 
     @Override
     public void onPause(){
         super.onPause();
         Log.v("LifeCycle", "------------------------------>onPause");
+        //  DB更新
+        AppDBUpdated();
+        mRewardedVideoAd.pause(this);
     }
 
     @Override
@@ -1039,6 +1150,8 @@ public class MainActivity extends AppCompatActivity
     public void onStop(){
         super.onStop();
         Log.v("LifeCycle", "------------------------------>onStop");
+        //  DB更新
+        AppDBUpdated();
     }
 
     @Override
@@ -1063,6 +1176,12 @@ public class MainActivity extends AppCompatActivity
             am.setStreamVolume(AudioManager.STREAM_MUSIC, now_volume, 0);
             am = null;
         }
+
+        //  DB更新
+        AppDBUpdated();
+        //動画
+        mRewardedVideoAd.destroy(this);
+
     }
 
     //  戻るボタン
