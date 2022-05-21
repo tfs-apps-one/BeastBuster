@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity
     final int PLAY_1800 = 1800;         //2H
     final int PLAY_4500 = 4500;         //5H
     final int PLAY_9000 = 9000;         //10H
+    final int PLAY_PLUS = 450;          //30分加算
 
     private int playcount = 0;  //繰り返し再生回数
 
@@ -139,12 +140,13 @@ public class MainActivity extends AppCompatActivity
 
     // リワード広告
     private RewardedVideoAd mRewardedVideoAd;
+
     /*
     // テストID
     private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
     private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
-     */
+    */
 
     // 本物
     private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
@@ -225,7 +227,7 @@ public class MainActivity extends AppCompatActivity
             case PLAY_INIT_COUNT:   db_data1 = PLAY_1800;   break;
             case PLAY_1800:         db_data1 = PLAY_4500;   break;
             case PLAY_4500:         db_data1 = PLAY_9000;   break;
-            default:                db_data1 = PLAY_9000;   break;
+            default:                db_data1 = tmp_data + PLAY_PLUS;  break;
         }
 
         // 動画視聴の日付
@@ -747,6 +749,7 @@ public class MainActivity extends AppCompatActivity
                     "\n\n\n　1回視聴：1800回に増加( 2h 相当)" +
                     "\n　2回視聴：4500回に増加( 5h 相当)"+
                     "\n　3回視聴：9000回に増加(10h 相当)"+
+                    "\n　4回以上は450回ずつ増えます"+
                     "\n\n\n※現在の連続再生回数 : "+db_data1+"回"+"\n \n\n\n";
 
             btn_yes += "視聴";
@@ -759,6 +762,7 @@ public class MainActivity extends AppCompatActivity
                     "\n\n\n  Watch once     [ COUNT 1800 ]" +
                     "\n  Watch twice    [ COUNT 4500 ]"+
                     "\n  Watch 3 times [ COUNT 9000 ]"+
+                    "\n  4 times or more will increase by [ COUNT 450 ]"+
                     "\n\n\n Current COUNT  [ "+db_data1+" ]"+"\n\n\n\n";
 
             btn_yes += "YES";
