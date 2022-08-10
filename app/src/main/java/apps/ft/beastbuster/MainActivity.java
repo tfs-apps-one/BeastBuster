@@ -265,6 +265,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRewardedVideoAdLoaded() {
+        if (_language.equals("ja")) {
+            Toast.makeText(this, "報酬動画の準備完了", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "Reward video ready." + (db_data1), Toast.LENGTH_SHORT).show();
+        }
 //        Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show();
     }
 
