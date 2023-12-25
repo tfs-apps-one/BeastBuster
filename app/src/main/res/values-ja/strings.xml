@@ -101,19 +101,23 @@
         <item>3</item>
     </string-array>
 
-    <string name="gun_kind_title">銃声</string>
-    <string name="gun_kind_summary">銃声種類を選択して下さい</string>
-    <string name="gun_kind_dialog">銃声</string>
+    <string name="gun_kind_title">銃声、爆竹、花火</string>
+    <string name="gun_kind_summary">種類を選択して下さい\n爆竹と花火は動画閲覧により鳴動が有効となります</string>
+    <string name="gun_kind_dialog">銃声、爆竹、花火</string>
 
     <string-array name="gun_kind_entries_list">
         <item>銃声1</item>
         <item>銃声2</item>
         <item>銃声3</item>
+        <item>爆竹</item>
+        <item>花火</item>
     </string-array>
     <string-array name="gun_kind_entryvalues_list">
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string name="thunder_kind_title">雷鳴</string>

@@ -101,19 +101,23 @@
         <item>3</item>
     </string-array>
 
-    <string name="gun_kind_title">총성</string>
-    <string name="gun_kind_summary">총성 종류를 선택하세요</string>
-    <string name="gun_kind_dialog">총성</string>
+    <string name="gun_kind_title">총성・폭죽・불꽃</string>
+    <string name="gun_kind_summary">종류를 선택하십시오\n보상 동영상 열람에 의해 폭죽과 불꽃의 울림은 유효합니다</string>
+    <string name="gun_kind_dialog">총성・폭죽・불꽃</string>
 
     <string-array name="gun_kind_entries_list">
         <item>총성1</item>
         <item>총성2</item>
         <item>총성3</item>
+        <item>폭죽</item>
+        <item>불꽃</item>
     </string-array>
     <string-array name="gun_kind_entryvalues_list">
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string name="thunder_kind_title">천둥</string>

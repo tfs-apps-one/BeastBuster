@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -149,17 +150,17 @@ public class MainActivity extends AppCompatActivity
     public RewardedAd rewardedAd;
 //    private RewardedVideoAd mRewardedVideoAd;
 
-    /*
+
     // テストID
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+    //private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
-    private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
-    */
+    //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
+
 
     // 本物
     private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
     // 本物
-    private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
+    //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,9 +218,17 @@ public class MainActivity extends AppCompatActivity
         mRewardedVideoAd.setRewardedVideoAdListener(this);
         loadRewardedVideoAd();
          */
+        //動画リワード
+        loadRewardedAd();
+    }
+
+    /**
+      リワード広告処理
+      *
+    */
+    private void loadRewardedAd() {
         RewardedAd.load(this,
                 AD_UNIT_ID,
-//                "ca-app-pub-3940256099942544/5224354917",
                 new AdRequest.Builder().build(),
                 new RewardedAdLoadCallback() {
                     @Override
@@ -232,28 +241,13 @@ public class MainActivity extends AppCompatActivity
                         else{
                             Toast.makeText(context, "Movie OK !!", Toast.LENGTH_SHORT).show();
                         }
-
-//                        Log.d("TAG", "The rewarded ad loaded.");
                     }
-
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
 //                        Log.d("TAG", "The rewarded ad wasn't loaded yet.");
                     }
                 });
-
-
     }
-
-    /**
-      リワード広告処理
-      *
-    */
-    /*
-    private void loadRewardedVideoAd() {
-        mRewardedVideoAd.loadAd(AD_UNIT_ID,new AdRequest.Builder().build());
-    }
-    */
     public void RdShow(){
         if (rewardedAd != null) {
             Activity activityContext = MainActivity.this;
@@ -282,12 +276,14 @@ public class MainActivity extends AppCompatActivity
             case PLAY_INIT_COUNT:   db_data1 = PLAY_1800;   break;
             case PLAY_1800:         db_data1 = PLAY_4500;   break;
             case PLAY_4500:         db_data1 = PLAY_9000;   break;
-            default:                db_data1 = tmp_data + PLAY_PLUS;  break;
+
+            default:                db_data1 = tmp_data + PLAY_PLUS;
+                                    db_data3 = 1;   //爆竹と花火を有効
+                                    break;
         }
 
         // 動画視聴の日付
         db_data2 = getNowDate();
-
 
         //ユーザーレベルアップ
         if (_language.equals("ja")) {
@@ -298,52 +294,8 @@ public class MainActivity extends AppCompatActivity
         }
         AppDBUpdated();
         ImageShow();
+        loadRewardedAd();   //リワード動画再生の準備
     }
-    /*
-    @Override
-    public void onRewardedVideoAdLeftApplication() {
-
-        Toast.makeText(this, "onRewardedVideoAdLeftApplication",
-                Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onRewardedVideoAdClosed() {
-//        Toast.makeText(this, "onRewardedVideoAdClosed", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRewardedVideoAdFailedToLoad(int errorCode) {
-//        Toast.makeText(this, "onRewardedVideoAdFailedToLoad err="+errorCode, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRewardedVideoAdLoaded() {
-        if (_language.equals("ja")) {
-            Toast.makeText(this, "報酬動画の準備完了", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(this, "Reward video ready." + (db_data1), Toast.LENGTH_SHORT).show();
-        }
-//        Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRewardedVideoAdOpened() {
-//        Toast.makeText(this, "onRewardedVideoAdOpened", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRewardedVideoStarted() {
-//        Toast.makeText(this, "onRewardedVideoStarted", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRewardedVideoCompleted() {
-//        Toast.makeText(this, "onRewardedVideoCompleted", Toast.LENGTH_SHORT).show();
-    }
-    */
 
     @Override
     public void onStart() {
@@ -415,8 +367,8 @@ public class MainActivity extends AppCompatActivity
 
         //銃
         ImageView view2 = (ImageView) findViewById(R.id.imageView2);
-        if (screen_type == 2)   view2.setImageResource(R.drawable.gun2);
-        else                     view2.setImageResource(R.drawable.gun);
+        if (screen_type == 2)   view2.setImageResource(R.drawable.bom2);
+        else                     view2.setImageResource(R.drawable.bom);
 
         //雷鳴
         ImageView view3 = (ImageView) findViewById(R.id.imageView3);
@@ -502,6 +454,7 @@ public class MainActivity extends AppCompatActivity
 
         //繰り返し再生回数をゼロにリセット
         playcount = 0;
+        int tmp_gun_type = 0;
 
         ImageShow();
 
@@ -581,9 +534,16 @@ public class MainActivity extends AppCompatActivity
                 //タイマースケジュール設定＆開始
                 this.mainTimer2.schedule(mainTimerTask2, 500, play_delay);
                 //ＢＧＭ
-                if (gun_kind == 2)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_2);
-                else if (gun_kind == 3)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_3);
-                else                       this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
+                tmp_gun_type = gun_kind;
+                if (db_data3 < 1 && (gun_kind == 4 || gun_kind == 5)){
+                    tmp_gun_type = 1;   // 動画閲覧しないと設定反映されない
+                }
+
+                if (tmp_gun_type == 2)      this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_2);
+                else if (tmp_gun_type == 3)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_3);
+                else if (tmp_gun_type == 4)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firecracker);
+                else if (tmp_gun_type == 5)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firework);
+                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
 
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
@@ -805,12 +765,12 @@ public class MainActivity extends AppCompatActivity
 
         if (_language.equals("ja")) {
 
-            pop_message += "\n\n動画を視聴して「連続再生回数」を増やしますか？" +
-                    "\n初期値450回の場合、約30分鈴音を連続して再生します。" +
-                    "\n\n\n　1回視聴：1800回に増加( 2h 相当)" +
-                    "\n　2回視聴：4500回に増加( 5h 相当)"+
-                    "\n　3回視聴：9000回に増加(10h 相当)"+
-                    "\n　4回以上は450回ずつ増えます"+
+            pop_message += "\n\n広告動画を視聴して報酬を得ますか？\n「連続再生」の回数がＵＰします。" +
+                    "\n初期値450回は「鈴音」30分間の\n連続再生に相当します。" +
+                    "\n\n\n1回視聴：1800回に増加( 2h 相当)" +
+                    "\n2回視聴：4500回に増加( 5h 相当)"+
+                    "\n3回視聴：9000回に増加(10h 相当)"+
+                    "\n4回以上は「爆竹」と「花火」の再生有効\n連続回数を450回ずつ増加。"+
                     "\n\n\n※現在の連続再生回数 : "+db_data1+"回"+"\n \n\n\n";
 
             btn_yes += "視聴";
@@ -820,11 +780,11 @@ public class MainActivity extends AppCompatActivity
             pop_message += "\n\n \n" +
                     "Do you want to watch the video and increase the continuous playback COUNT ?" +
                     "\n\n\nPlay the bell for 30 minutes with [ COUNT 450 ]" +
-                    "\n\n\n  Watch once     [ COUNT 1800 ]" +
-                    "\n  Watch twice    [ COUNT 4500 ]"+
-                    "\n  Watch 3 times [ COUNT 9000 ]"+
-                    "\n  4 times or more will increase by [ COUNT 450 ]"+
-                    "\n\n\n Current COUNT  [ "+db_data1+" ]"+"\n\n\n\n";
+                    "\n\n\nWatch once     [ COUNT 1800 ]" +
+                    "\nWatch twice    [ COUNT 4500 ]"+
+                    "\nWatch 3 times [ COUNT 9000 ]"+
+                    "\n4 times or more will increase by [ COUNT 450 ] and Firecrackers and fireworks playback enabled."+
+                    "\n\n\nCurrent COUNT  [ "+db_data1+" ]"+"\n\n\n\n";
 
             btn_yes += "YES";
             btn_no += "N O";
@@ -834,8 +794,8 @@ public class MainActivity extends AppCompatActivity
         vmessage.setText(pop_message);
         vmessage.setBackgroundColor(Color.DKGRAY);
         vmessage.setTextColor(Color.WHITE);
-        vmessage.setTextSize(17);
-
+        vmessage.setGravity(Gravity.CENTER);
+        vmessage.setTextSize(16);
 
         //タイトル
         guide.setTitle("TIPS");

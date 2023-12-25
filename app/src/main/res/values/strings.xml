@@ -108,19 +108,24 @@
         <item>3</item>
     </string-array>
 
-    <string name="gun_kind_title">gunshot</string>
-    <string name="gun_kind_summary">Please select gunshot type</string>
-    <string name="gun_kind_dialog">gunshot</string>
+    <string name="gun_kind_title">gunshot or explosion</string>
+    <string name="gun_kind_summary">Please select type\nFirecrackers and fireworks will be activated by viewing the reward video.</string>
+    <string name="gun_kind_dialog">gunshot or explosion</string>
 
     <string-array name="gun_kind_entries_list">
         <item>gunshot 1</item>
         <item>gunshot 2</item>
         <item>gunshot 3</item>
+        <item>firecrackers</item>
+        <item>firework</item>
+
     </string-array>
     <string-array name="gun_kind_entryvalues_list">
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string name="thunder_kind_title">thunder</string>
