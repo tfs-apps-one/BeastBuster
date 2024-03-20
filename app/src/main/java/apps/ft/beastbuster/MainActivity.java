@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.gms.ads.AdView;
@@ -582,7 +583,11 @@ public class MainActivity extends AppCompatActivity
         //音量調整
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
        // 音量を設定する
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, sound_volume, 0);
+        int tmp_volume = sound_volume;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            tmp_volume = sound_volume * 2;  //30段階になったため
+        }
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, tmp_volume, 0);
 
 /*        if (bgm.isPlaying() == false) {
             bgm.setLooping(true);
