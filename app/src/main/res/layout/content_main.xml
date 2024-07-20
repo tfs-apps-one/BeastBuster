@@ -14,7 +14,7 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-<TextView
+    <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -239,6 +239,17 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp">
 
+        <!-- dummy text
+        <TextView
+            android:id="@+id/text_dummy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:text="dummy"/>
+        -->
+
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
             android:layout_width="match_parent"
@@ -248,10 +259,16 @@
             android:layout_marginBottom="5dp"
             ads:adSize="BANNER"
             ads:adUnitId="ca-app-pub-4924620089567925/6361767912">
-        <!--
-            ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
-            -->
             </com.google.android.gms.ads.AdView>
+
     </LinearLayout>
+
+    <!--
+    本番
+    ads:adUnitId="ca-app-pub-4924620089567925/6361767912">
+    テスト
+    ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+    -->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="apps.ft.beastbuster">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature android:name="android.hardware.camera.flash" />
     <uses-feature android:name="android.hardware.camera" />
@@ -10,13 +10,17 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
-        android:icon="@drawable/bb_96x96"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/bb_128x128"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/bb_96x96"
+        android:roundIcon="@drawable/bb_128x128"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BeastBuster">
+        android:theme="@style/Theme.BeastBuster"
+        tools:targetApi="31">
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -24,16 +28,15 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:exported="true"
-            android:theme="@style/Theme.BeastBuster.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".BbSetActivity" />
 
     </application>

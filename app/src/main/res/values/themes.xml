@@ -16,11 +16,12 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <!--
     <style name="Theme.BeastBuster.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
+    -->
     <style name="Theme.BeastBuster.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.BeastBuster.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

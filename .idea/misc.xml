@@ -1,27 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="app/src/main/res/drawable/bak_grad.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/bak_grad2.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/btn_emer.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/btn_grad.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/btn_press.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/btn_round.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/btn_round2.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/btn_tips.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/drawable/prog.xml" value="0.24537037037037038" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22192028985507245" />
-        <entry key="app/src/main/res/layout/content_main.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_first.xml" value="0.22192028985507245" />
-        <entry key="app/src/main/res/layout/fragment_second.xml" value="0.22192028985507245" />
-        <entry key="app/src/main/res/menu/menu_main.xml" value="0.20989583333333334" />
-        <entry key="app/src/main/res/xml/preferences.xml" value="0.35190217391304346" />
-      </map>
-    </option>
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

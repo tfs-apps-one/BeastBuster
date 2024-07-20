@@ -70,7 +70,7 @@
     </string-array>
 
     <string name="emergency_title">緊急再生音</string>
-    <string name="emergency_summary">緊急再生音を選択して下さい\n携帯を左右に50度振って再生します</string>
+    <string name="emergency_summary">緊急再生音を選択して下さい\n携帯を左右に50度振って再生します\n（スマホの自動回転「ON」が必要です）</string>
     <string name="emergency_dialog">緊急再生音選択</string>
 
     <string-array name="emergency_entries_list">

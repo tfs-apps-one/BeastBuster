@@ -2,12 +2,14 @@ package apps.ft.beastbuster;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -128,9 +130,9 @@ public class MainActivity extends AppCompatActivity
     public MyOpenHelper helper;
     private int db_user_lv = 0; //ユーザーレベル
     private int db_data1 = 0;   //再生回数
-    private int db_data2 = 0;
-    private int db_data3 = 0;
-    private int db_data4 = 0;
+    private int db_data2 = 0;   //未使用　リワード視聴日付
+    private int db_data3 = 0;   //オプション音（爆竹音）
+    private int db_data4 = 0;   //評価ポップアップ
     private int db_data5 = 0;
 
 //test_make
@@ -140,16 +142,17 @@ public class MainActivity extends AppCompatActivity
     final int PLAY_4500 = 4500;         //5H
     final int PLAY_9000 = 9000;         //10H
     final int PLAY_PLUS = 450;          //30分加算
-
     private int playcount = 0;  //繰り返し再生回数
 
     // 広告
     private AdView mAdview;
-
     // リワード広告
-    public LoadAdError adError;
     public RewardedAd rewardedAd;
-//    private RewardedVideoAd mRewardedVideoAd;
+
+    //評価ポップアップ
+    private int ReviewCount = 1;
+ //test_make
+    private int REVIEW_POP = 7; //評価ポップアップ
 
 
     // テストID
@@ -167,8 +170,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         //  国設定
         _local = Locale.getDefault();
@@ -208,17 +211,12 @@ public class MainActivity extends AppCompatActivity
         }, new Handler());
 
         //広告
-        mAdview = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdview.loadAd(adRequest);
+        MobileAds.initialize(this, initializationStatus -> {
+            mAdview = findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdview.loadAd(adRequest);
+        });
 
-        // リワード広告
-        /*
-        MobileAds.initialize(this, APP_ID);
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
-        mRewardedVideoAd.setRewardedVideoAdListener(this);
-        loadRewardedVideoAd();
-         */
         //動画リワード
         loadRewardedAd();
     }
@@ -358,6 +356,15 @@ public class MainActivity extends AppCompatActivity
         }
 
         ImageShow();
+
+        //評価ポップアップ処理
+        if (db_data4 <= REVIEW_POP){
+            if (ReviewCount != 0){
+                db_data4++;
+                ReviewCount = 0;
+            }
+        }
+        ShowRatingPopup();
     }
     public void ImageShow()
     {
@@ -895,6 +902,7 @@ public class MainActivity extends AppCompatActivity
         int data1 = 0;
         int data2 = 0;
         int data3 = 0;
+        int data4 = 0;
 
         SQLiteDatabase db = helper.getReadableDatabase();
         StringBuilder sql = new StringBuilder();
@@ -915,6 +923,7 @@ public class MainActivity extends AppCompatActivity
                 data1 = cursor.getInt(1);
                 data2 = cursor.getInt(2);
                 data3 = cursor.getInt(3);
+                data4 = cursor.getInt(4);
             }
         } finally {
             db.close();
@@ -949,6 +958,7 @@ public class MainActivity extends AppCompatActivity
             db_data1 = data1;
             db_data2 = data2;
             db_data3 = data3;
+            db_data4 = data4;
             /*  Toast.makeText(this, "Data Loading...  Access Level:" + user_lv, Toast.LENGTH_SHORT).show();*/
         }
     }
@@ -1246,5 +1256,103 @@ public class MainActivity extends AppCompatActivity
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    private void ShowRatingPopup() {
+
+        String str_ttl = "";
+        String str_mess = "";
+        String str_btn_ok = "";
+        String str_btn_ng = "";
+
+        //アプリを起動して 7回目の時
+        if (db_data4 != REVIEW_POP){
+            return;
+        }
+        else {
+            db_data4++; //ポップアップを１回表示にするため、ここでカウントする
+        }
+        if (_language.equals("ja")) {
+            str_ttl = "★☆アプリ評価のお願い☆★";
+            str_mess = "\nいつもご利用ありがとうございます\n" +
+                    "\nたくさん利用して頂いている貴方にお願いです。アプリを評価してもらませんか？ 評価して頂けると励みになります。" +
+                    "\n\n(この通知は今回限りです)" +
+                    "\n\n\n";
+            str_btn_ok = "評価する";
+            str_btn_ng = "　後で　";
+        }else{
+            str_ttl = " Please rate the app ";
+            str_mess = "\nThank you for using it all the time.\n" +
+                    "\nThank you to all of you who are using it a lot. Would you like to rate the app? It would be encouraging if you would rate us." +
+                    "\n\n(This notification is only for this time)" +
+                    "\n\n\n";
+            str_btn_ok = "review";
+            str_btn_ng = "later";
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(str_ttl);
+        builder.setMessage(str_mess);
+        builder.setPositiveButton(str_btn_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RedirectToPlayStoreForRating();
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(str_btn_ng, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    private void ShowRatingPopupNG() {
+        String str_ttl = "";
+        String str_mess = "";
+        String str_btn = "";
+
+        if (_language.equals("ja")) {
+            str_ttl = "接続に失敗しました";
+            str_mess = "\n評価サイトへのアクセスに失敗しました\n" +
+                    "\n" +
+                    "\n\n" +
+                    "\n\n\n";
+            str_btn = "確認";
+        }
+        else{
+            str_ttl = "Connection Failed";
+            str_mess = "\nFailed to access Site.\n" +
+                    "\n" +
+                    "\n\n" +
+                    "\n\n\n";
+            str_btn = "OK";
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(str_ttl);
+        builder.setMessage(str_mess);
+        builder.setPositiveButton(str_btn, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    private void RedirectToPlayStoreForRating() {
+        try {
+            Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName());
+            Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(goToMarket);
+        } catch (ActivityNotFoundException e) {
+            ShowRatingPopupNG();
+        }
     }
 }
