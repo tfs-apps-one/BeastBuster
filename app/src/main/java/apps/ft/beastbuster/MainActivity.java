@@ -15,9 +15,12 @@ import android.os.Bundle;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.OnUserEarnedRewardListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
@@ -154,17 +157,25 @@ public class MainActivity extends AppCompatActivity
  //test_make
     private int REVIEW_POP = 7; //評価ポップアップ
 
-
     // テストID
     //private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
 
-
     // 本物
     private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
     // 本物
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
+
+    //test_make
+    //インタースティシャル広告
+    private InterstitialAd mInterstitialAd;
+    //本番ID
+    private static final String AD_INTER_UNIT_ID = "ca-app-pub-4924620089567925/3067846578"; // 実際のIDに変更
+    //テストID
+//    private static final String AD_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+
+    private int SOUND_USED_MAX = 12;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,12 +230,81 @@ public class MainActivity extends AppCompatActivity
 
         //動画リワード
         loadRewardedAd();
+
+        //インタースティシャル広告
+        loadInterstitialAd();
     }
 
-    /**
-      リワード広告処理
-      *
-    */
+    /************************************************************
+        インタースティシャル広告をロード
+     ************************************************************/
+    private void loadInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        InterstitialAd.load(this, AD_INTER_UNIT_ID, adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+                Log.d("AdMob", "インタースティシャル広告がロードされました");
+
+                // 広告のコールバックを設定（閉じた後の動作）
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        Log.d("AdMob", "広告が閉じられました");
+                        mInterstitialAd = null; // 再ロードの準備
+                        loadInterstitialAd(); // 次の広告をロード
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(com.google.android.gms.ads.AdError adError) {
+                        Log.d("AdMob", "広告の表示に失敗しました: " + adError.getMessage());
+                        mInterstitialAd = null; // 再ロードの準備
+                    }
+                });
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                Log.d("AdMob", "インタースティシャル広告のロードに失敗: " + loadAdError.getMessage());
+                mInterstitialAd = null;
+            }
+        });
+    }
+    // インタースティシャル広告を表示
+    private void showInterstitialAd() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(this);
+        } else {
+            Log.d("AdMob", "インタースティシャル広告はまだロードされていません");
+            loadInterstitialAd(); // すぐに次の広告をロード
+        }
+    }
+    private void fullAdDisplay() {
+        if (db_data2 > SOUND_USED_MAX) {
+            db_data2 = 0;
+        }
+        db_data2--;
+        if (db_data2 < 0) {
+            db_data2 = SOUND_USED_MAX;
+        }
+        if (db_data2 == 1) {
+            //全面広告表示
+            showInterstitialAd();
+        }
+        if (db_data2 == 2 || db_data2 == 3) {
+            Context context = getApplicationContext();
+            if (_language.equals("ja")) {
+                Toast.makeText(context, "しばらく使用すると全面広告が表示されます....", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "After a while, Full-page ad appears....", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /************************************************************
+         リワード広告処理
+     ************************************************************/
     private void loadRewardedAd() {
         RewardedAd.load(this,
                 AD_UNIT_ID,
@@ -527,10 +607,12 @@ public class MainActivity extends AppCompatActivity
                 if (this.mainTimer2 != null) {
                     this.mainTimer2.cancel();
                     this.mainTimer2 = null;
+                    fullAdDisplay();
                 }
                 if (this.mainTimer3 != null) {
                     this.mainTimer3.cancel();
                     this.mainTimer3 = null;
+                    fullAdDisplay();
                 }
                 break;
 
@@ -556,10 +638,12 @@ public class MainActivity extends AppCompatActivity
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
                     this.mainTimer1 = null;
+                    fullAdDisplay();
                 }
                 if (this.mainTimer3 != null) {
                     this.mainTimer3.cancel();
                     this.mainTimer3 = null;
+                    fullAdDisplay();
                 }
                 break;
 
@@ -578,10 +662,12 @@ public class MainActivity extends AppCompatActivity
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
                     this.mainTimer1 = null;
+                    fullAdDisplay();
                 }
                 if (this.mainTimer2 != null) {
                     this.mainTimer2.cancel();
                     this.mainTimer2 = null;
+                    fullAdDisplay();
                 }
                 break;
         }
@@ -673,14 +759,17 @@ public class MainActivity extends AppCompatActivity
         if (this.mainTimer1 != null) {
             this.mainTimer1.cancel();
             this.mainTimer1 = null;
+            fullAdDisplay();
         }
         if (this.mainTimer2 != null) {
             this.mainTimer2.cancel();
             this.mainTimer2 = null;
+            fullAdDisplay();
         }
         if (this.mainTimer3 != null) {
             this.mainTimer3.cancel();
             this.mainTimer3 = null;
+            fullAdDisplay();
         }
 
         this.light_OFF();

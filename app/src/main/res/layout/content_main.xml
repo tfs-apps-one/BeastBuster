@@ -257,7 +257,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="5dp"
-            ads:adSize="BANNER"
+            ads:adSize="LARGE_BANNER"
             ads:adUnitId="ca-app-pub-4924620089567925/6361767912">
             </com.google.android.gms.ads.AdView>
 
