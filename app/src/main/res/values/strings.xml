@@ -23,7 +23,8 @@
         <item>10 seconds later</item>
         <item>15 seconds later</item>
         <item>20 seconds later</item>
-        <item>3 seconds later</item>
+        <item>30 seconds later</item>
+        <item>Random later</item>
     </string-array>
     <string-array name="play_delay_entryvalues_list">
         <item>0</item>
@@ -35,6 +36,7 @@
         <item>15</item>
         <item>20</item>
         <item>30</item>
+        <item>99</item>
     </string-array>
 
     <string name="play_volume_title">volume</string>

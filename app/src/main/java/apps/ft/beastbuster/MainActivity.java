@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import java.util.Random;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.AdRequest;
@@ -108,7 +109,10 @@ public class MainActivity extends AppCompatActivity
     private int thunder_kind = 0;
     private int screen_type = 0;
     private int play_delay = 0;
+    private int play_random_delay = 0;
+    private boolean isRandomMode = false;
     private String emergency_kind = "";
+    private boolean isEmergencyMode = false;
     private boolean volume_back = false;
     //ライト関連
     private CameraManager mCameraManager;
@@ -158,7 +162,8 @@ public class MainActivity extends AppCompatActivity
     private int REVIEW_POP = 7; //評価ポップアップ
 
     // テストID
-    //private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+    //test_make
+//    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
 
@@ -404,8 +409,16 @@ public class MainActivity extends AppCompatActivity
         //間隔
         String str5 = sharedPreferences.getString("play_delay", "0");
         play_delay = Integer.parseInt(str5);
-        if(play_delay == 0) play_delay = 10;
-        else                 play_delay *= 1000;
+        if(play_delay == 0){
+            play_delay = 10; isRandomMode = false;
+        }
+        else if(play_delay < 99){
+            play_delay *= 1000; isRandomMode = false;
+        }
+        else{
+            play_delay = 10; isRandomMode = true;
+        }
+
         //緊急音
         emergency_kind = sharedPreferences.getString("emergency_kind", "thunder");
         //音量戻し
@@ -544,6 +557,13 @@ public class MainActivity extends AppCompatActivity
         playcount = 0;
         int tmp_gun_type = 0;
 
+        if (mode == 0){
+            isEmergencyMode = false;
+        }
+        else{
+            isEmergencyMode = true;
+        }
+
         ImageShow();
 
         Button btn1 = (Button) findViewById(R.id.btn_bell);
@@ -590,6 +610,7 @@ public class MainActivity extends AppCompatActivity
                 btn3.setBackgroundResource(R.drawable.btn_stop);
                 break;
         }
+        play_random_delay = 0;
 
         switch(type) {
             case 1:
@@ -598,7 +619,8 @@ public class MainActivity extends AppCompatActivity
                 //タスククラスインスタンス生成
                 this.mainTimerTask1 = new MainTimerTask();
                 //タイマースケジュール設定＆開始
-                this.mainTimer1.schedule(mainTimerTask1, 500, play_delay);
+                if (isEmergencyMode == true)    this.mainTimer1.schedule(mainTimerTask1, 500, 100);
+                else                            this.mainTimer1.schedule(mainTimerTask1, 500, play_delay);
                 //ＢＧＭ
                 if (bell_kind == 2)         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_2);
                 else if (bell_kind == 3)    this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_3);
@@ -622,18 +644,20 @@ public class MainActivity extends AppCompatActivity
                 //タスククラスインスタンス生成
                 this.mainTimerTask2 = new MainTimerTask();
                 //タイマースケジュール設定＆開始
-                this.mainTimer2.schedule(mainTimerTask2, 500, play_delay);
+                if (isEmergencyMode == true)    this.mainTimer2.schedule(mainTimerTask2, 500, 100);
+                else                            this.mainTimer2.schedule(mainTimerTask2, 500, play_delay);
+
                 //ＢＧＭ
                 tmp_gun_type = gun_kind;
                 if (db_data3 < 1 && (gun_kind == 4 || gun_kind == 5)){
                     tmp_gun_type = 1;   // 動画閲覧しないと設定反映されない
                 }
 
-                if (tmp_gun_type == 2)      this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_2);
+                if (tmp_gun_type == 2)       this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_2);
                 else if (tmp_gun_type == 3)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_3);
                 else if (tmp_gun_type == 4)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firecracker);
                 else if (tmp_gun_type == 5)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firework);
-                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
+                else                         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
 
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
@@ -653,11 +677,13 @@ public class MainActivity extends AppCompatActivity
                 //タスククラスインスタンス生成
                 this.mainTimerTask3 = new MainTimerTask();
                 //タイマースケジュール設定＆開始
-                this.mainTimer3.schedule(mainTimerTask3, 500, play_delay);
+                if (isEmergencyMode == true)    this.mainTimer3.schedule(mainTimerTask3, 500, 100);
+                else                            this.mainTimer3.schedule(mainTimerTask3, 500, play_delay);
+
                 //ＢＧＭ
-                if (thunder_kind == 2) this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_2);
+                if (thunder_kind == 2)      this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_2);
                 else if (thunder_kind == 3) this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_3);
-                else                            this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_1);
+                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_1);
 
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
@@ -728,7 +754,7 @@ public class MainActivity extends AppCompatActivity
     /* 効果音ストップ */
     public void soundStop(int type){
         ImageShow();
-
+        play_random_delay = 0;
         switch (type){
             case 1:
                 Button btn1 = (Button) findViewById(R.id.btn_bell);
@@ -1157,25 +1183,49 @@ public class MainActivity extends AppCompatActivity
     public class MainTimerTask extends TimerTask {
         @Override
         public void run() {
+            try {
+                if (countText.isPlaying() == false) {
+                    if (isRandomMode == true && play_random_delay > 0) {
+                        play_random_delay -= 100;
+                        Thread.sleep(100);
+                        if (play_random_delay <= 0) {
+                            play_random_delay = 0;
+                        }
+                        else{
+                            return;
+                        }
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             //ここに定周期で実行したい処理を記述します
             mHandler.post(new Runnable() {
                 public void run() {
+
                     //BGMタイマー起動
                     if (countText.isPlaying() == false) {
-                        playcount++;
-                        if (playcount <= db_data1){
-                            countText.start();
-                            ImageShow();
+                        if (isRandomMode == true && play_random_delay > 0){
+                            //ランダムタイムアップまで待つ;
                         }
                         else {
-                            playcount = 0;
-                            soundStop(1);
-                            soundStop(2);
-                            soundStop(3);
-                            ImageShow();
-                            // タイムアップのダイアログ表示
-                            // TODO:
-                            TimeUpPopup();
+                            playcount++;
+                            if (playcount <= db_data1) {
+                                countText.start();
+                                if (isRandomMode == true && isEmergencyMode == false) {
+                                    play_random_delay = (new Random().nextInt(15) + 8) * 1000;
+                                }
+                                ImageShow();
+                            } else {
+                                playcount = 0;
+                                soundStop(1);
+                                soundStop(2);
+                                soundStop(3);
+                                ImageShow();
+                                // タイムアップのダイアログ表示
+                                // TODO:
+                                TimeUpPopup();
+                            }
                         }
                     }
                 }

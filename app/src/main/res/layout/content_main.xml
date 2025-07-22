@@ -11,6 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:background="@drawable/bak_grad"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
@@ -259,7 +260,7 @@
             android:layout_marginBottom="5dp"
             ads:adSize="LARGE_BANNER"
             ads:adUnitId="ca-app-pub-4924620089567925/6361767912">
-            </com.google.android.gms.ads.AdView>
+        </com.google.android.gms.ads.AdView>
 
     </LinearLayout>
 
