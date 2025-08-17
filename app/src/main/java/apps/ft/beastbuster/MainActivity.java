@@ -749,6 +749,17 @@ public class MainActivity extends AppCompatActivity
             v.setTextColor(Color.parseColor("blue"));
         }
         v.setBackgroundResource(R.drawable.bak_grad);
+
+        // 注意
+        String mess = "";
+        if (_language.equals("ja")) {
+            mess = "他のアプリを開くと【連続再生】が停止する場合があります";
+        }
+        else{
+            mess = "Continuous playback may stop if you open another app.";
+        }
+        Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
+
     }
 
     /* 効果音ストップ */
@@ -1184,7 +1195,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void run() {
             try {
-                if (countText.isPlaying() == false) {
+                if (countText != null && countText.isPlaying() == false) {
                     if (isRandomMode == true && play_random_delay > 0) {
                         play_random_delay -= 100;
                         Thread.sleep(100);
@@ -1204,7 +1215,7 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
 
                     //BGMタイマー起動
-                    if (countText.isPlaying() == false) {
+                    if (countText != null && countText.isPlaying() == false) {
                         if (isRandomMode == true && play_random_delay > 0){
                             //ランダムタイムアップまで待つ;
                         }
