@@ -103,9 +103,9 @@
         <item>3</item>
     </string-array>
 
-    <string name="gun_kind_title">枪弹・鞭炮・焰火</string>
-    <string name="gun_kind_summary">请选择一个类型的一声枪响\n观看奖励视频即可激活鞭炮和烟花</string>
-    <string name="gun_kind_dialog">枪弹・鞭炮・焰火</string>
+    <string name="gun_kind_title">枪弹・鞭炮・焰火・狼</string>
+    <string name="gun_kind_summary">請揀一個類型\n睇片就可以用到「爆竹」「煙花」「狼」</string>
+    <string name="gun_kind_dialog">枪弹・鞭炮・焰火・狼</string>
 
     <string-array name="gun_kind_entries_list">
         <item>枪弹1</item>
@@ -113,6 +113,7 @@
         <item>枪弹3</item>
         <item>鞭炮</item>
         <item>焰火</item>
+        <item>狼</item>
     </string-array>
     <string-array name="gun_kind_entryvalues_list">
         <item>1</item>
@@ -120,6 +121,7 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
+        <item>6</item>
     </string-array>
 
     <string name="thunder_kind_title">霹雳</string>

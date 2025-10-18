@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Bear Bell</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
+    <!-- Strings used for fragments for navigation-->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
@@ -111,7 +111,7 @@
     </string-array>
 
     <string name="gun_kind_title">gunshot or explosion</string>
-    <string name="gun_kind_summary">Please select type\nFirecrackers and fireworks will be activated by viewing the reward video.</string>
+    <string name="gun_kind_summary">Please select type\nFirecrackers and fireworks and wolf will be activated by viewing the reward video.</string>
     <string name="gun_kind_dialog">gunshot or explosion</string>
 
     <string-array name="gun_kind_entries_list">
@@ -120,6 +120,7 @@
         <item>gunshot 3</item>
         <item>firecrackers</item>
         <item>firework</item>
+        <item>wolf</item>
 
     </string-array>
     <string-array name="gun_kind_entryvalues_list">
@@ -128,6 +129,7 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
+        <item>6</item>
     </string-array>
 
     <string name="thunder_kind_title">thunder</string>

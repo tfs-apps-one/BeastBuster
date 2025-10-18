@@ -28,6 +28,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Gravity;
@@ -184,6 +185,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
@@ -649,7 +651,7 @@ public class MainActivity extends AppCompatActivity
 
                 //ＢＧＭ
                 tmp_gun_type = gun_kind;
-                if (db_data3 < 1 && (gun_kind == 4 || gun_kind == 5)){
+                if (db_data3 < 1 && (gun_kind == 4 || gun_kind == 5 || gun_kind == 6)){
                     tmp_gun_type = 1;   // 動画閲覧しないと設定反映されない
                 }
 
@@ -657,6 +659,7 @@ public class MainActivity extends AppCompatActivity
                 else if (tmp_gun_type == 3)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_3);
                 else if (tmp_gun_type == 4)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firecracker);
                 else if (tmp_gun_type == 5)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firework);
+                else if (tmp_gun_type == 6)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.wolf);
                 else                         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
 
                 if (this.mainTimer1 != null) {
@@ -908,7 +911,7 @@ public class MainActivity extends AppCompatActivity
                     "\n\n\n1回視聴：1800回に増加( 2h 相当)" +
                     "\n2回視聴：4500回に増加( 5h 相当)"+
                     "\n3回視聴：9000回に増加(10h 相当)"+
-                    "\n4回以上は「爆竹」と「花火」の再生有効\n連続回数を450回ずつ増加。"+
+                    "\n4回以上は「爆竹／花火／狼」の再生有効\n連続回数を450回ずつ増加。"+
                     "\n\n\n※現在の連続再生回数 : "+db_data1+"回"+"\n \n\n\n";
 
             btn_yes += "視聴";
