@@ -41,6 +41,7 @@ import android.view.MenuItem;
 //効果音
 import android.media.MediaPlayer;
 import android.media.AudioManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 //タイマースレッド
 import java.io.IOException;
@@ -64,9 +65,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -77,6 +82,7 @@ import android.widget.Toast;
 //DB
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.ToggleButton;
 
 
 //public class MainActivity extends AppCompatActivity {
@@ -162,26 +168,49 @@ public class MainActivity extends AppCompatActivity
  //test_make
     private int REVIEW_POP = 7; //評価ポップアップ
 
-    // テストID
-    //test_make
-//    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+    // テストID 動画リワード
+//test_make ※※本物を使うこと！！
+    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
-
     // 本物
-    private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
+//    private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
     // 本物
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
 
-    //test_make
+//test_make ※※本番を使うこと！！
     //インタースティシャル広告
     private InterstitialAd mInterstitialAd;
     //本番ID
-    private static final String AD_INTER_UNIT_ID = "ca-app-pub-4924620089567925/3067846578"; // 実際のIDに変更
+//    private static final String AD_INTER_UNIT_ID = "ca-app-pub-4924620089567925/3067846578"; // 実際のIDに変更
     //テストID
-//    private static final String AD_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+    private static final String AD_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
 
     private int SOUND_USED_MAX = 12;
+
+
+    private int set_interval;
+    private Spinner sp_sound1;      //通常音選択
+    private Spinner sp_sound2;      //SOS音選択
+    private Spinner sp_light1;      //通常ライト選択
+    private Spinner sp_light2;      //SOSライト選択
+    private Spinner sp_interval;    //再生間隔
+
+    private SeekBar seek_volume1;    //通常音量
+    private SeekBar seek_volume2;    //SOS音量
+
+    private ToggleButton toggle_normal;      //通常音状態（ON/OFF）
+    private ToggleButton toggle_emergency;   //異常音状態（ON/OFF）
+
+    final private int INTERVAL_0 = 0;
+    final private int INTERVAL_1 = 1000;
+    final private int INTERVAL_3 = 3000;
+    final private int INTERVAL_5 = 5000;
+    final private int INTERVAL_7 = 7000;
+    final private int INTERVAL_10 = 10000;
+    final private int INTERVAL_15 = 15000;
+    final private int INTERVAL_20 = 20000;
+    final private int INTERVAL_30 = 30000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,23 +224,6 @@ public class MainActivity extends AppCompatActivity
         _local = Locale.getDefault();
         _language = _local.getLanguage();
         _country = _local.getCountry();
-
-        TextView v = (TextView)findViewById(R.id.textView);
-        v.setBackgroundTintList(null);
-        if (_language.equals("ja")) {
-            v.setText("[PLAY]で通常再生します");
-        }
-        else if (_language.equals("zh")) {
-            v.setText("在[PLAY]播放在正常时间");
-        }
-        else if (_language.equals("ko")) {
-            v.setText("[PLAY]는 보통 때 재생합니다");
-        }
-        else{
-            v.setText("Please press [PLAY]");
-        }
-        v.setTextColor(Color.parseColor("black"));
-        v.setBackgroundResource(R.drawable.bak_grad);
 
         //音
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -240,6 +252,12 @@ public class MainActivity extends AppCompatActivity
 
         //インタースティシャル広告
         loadInterstitialAd();
+
+        //各種イベント登録
+        toggleSelect();
+        seekSelect();
+        spinnerSelect();
+        screen_display();
     }
 
     /************************************************************
@@ -463,93 +481,13 @@ public class MainActivity extends AppCompatActivity
     }
     public void ImageShow()
     {
-        //ベル
-        ImageView view1 = (ImageView) findViewById(R.id.imageView);
-        if (screen_type == 2)   view1.setImageResource(R.drawable.bell2);
-        else                     view1.setImageResource(R.drawable.bell);
 
-        //銃
-        ImageView view2 = (ImageView) findViewById(R.id.imageView2);
-        if (screen_type == 2)   view2.setImageResource(R.drawable.bom2);
-        else                     view2.setImageResource(R.drawable.bom);
-
-        //雷鳴
-        ImageView view3 = (ImageView) findViewById(R.id.imageView3);
-        if (screen_type == 2)   view3.setImageResource(R.drawable.thunder2);
-        else                     view3.setImageResource(R.drawable.thunder);
-
-
-        Button btn1 = (Button) findViewById(R.id.btn_bell);
-        Button btn2 = (Button) findViewById(R.id.btn_gun);
-        Button btn3 = (Button) findViewById(R.id.btn_thunder);
-        Button btn4 = (Button) findViewById(R.id.btn_emergency);
-        Button btn5 = (Button) findViewById(R.id.btn_tips);
-
-        btn1.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn2.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn3.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn4.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn5.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn5.setBackgroundResource(R.drawable.btn_tips);
-
-        if (this.mainTimer1 == null) {
-            btn1.setText("PLAY");
-            btn1.setTextColor(Color.parseColor("gray"));
-            //画面デザイン　色変更
-            if (screen_type == 2)   btn1.setBackgroundResource(R.drawable.btn_round2);
-            else                    btn1.setBackgroundResource(R.drawable.btn_round);
-        }
-        else
-        {
-            btn1.setText("STOP");
-            btn1.setTextColor(Color.parseColor("gray"));
-            btn1.setBackgroundResource(R.drawable.btn_stop);
-        }
-        if (this.mainTimer2 == null) {
-            btn2.setText("PLAY");
-            btn2.setTextColor(Color.parseColor("gray"));
-            if (screen_type == 2)   btn2.setBackgroundResource(R.drawable.btn_round2);
-            else                    btn2.setBackgroundResource(R.drawable.btn_round);
-        }
-        else
-        {
-            btn2.setText("STOP");
-            btn2.setTextColor(Color.parseColor("gray"));
-            btn2.setBackgroundResource(R.drawable.btn_stop);
-        }
-        if (this.mainTimer3 == null) {
-            btn3.setText("PLAY");
-            btn3.setTextColor(Color.parseColor("gray"));
-            if (screen_type == 2)   btn3.setBackgroundResource(R.drawable.btn_round2);
-            else                    btn3.setBackgroundResource(R.drawable.btn_round);
-        }
-        else
-        {
-            btn3.setText("STOP");
-            btn3.setTextColor(Color.parseColor("gray"));
-            btn3.setBackgroundResource(R.drawable.btn_stop);
-        }
-
-        /* 緊急ボタン */
-        btn4.setBackgroundResource(R.drawable.btn_emer);
-
-        int temp_prog = 0;
-        TextView text_prog = (TextView) findViewById(R.id.text_progress);
-        temp_prog = ((db_data1 - playcount) * 100) / db_data1;
-
-        if (_language.equals("ja")) {
-            text_prog.setText("連続再生(残)：" + temp_prog + "%" + "\n(" + (db_data1 - playcount) + " / " + db_data1 + ")");
-        }else {
-            text_prog.setText("Remaining :" + temp_prog + "%" + "\n(" + (db_data1 - playcount) + " / " + db_data1 + ")");
-        }
-        LinearLayout lay_normal_61 = (LinearLayout)findViewById(R.id.linearLayout61);
-        lay_normal_61.setBackgroundTintList(null);   //マテリアルデザインの無効
-        lay_normal_61.setBackgroundResource(R.drawable.bak_grad);
-
+        /*
         ProgressBar prog = (ProgressBar) findViewById(R.id.progress);
         prog.setMin(0);
         prog.setMax(100);
         prog.setProgress(temp_prog);
+         */
     }
 
     /* 効果音スタート */
@@ -567,51 +505,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         ImageShow();
-
-        Button btn1 = (Button) findViewById(R.id.btn_bell);
-        Button btn2 = (Button) findViewById(R.id.btn_gun);
-        Button btn3 = (Button) findViewById(R.id.btn_thunder);
-
-        btn1.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn2.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn3.setBackgroundTintList(null);   //マテリアルデザインの無効
-
-        btn1.setText("PLAY");
-        btn1.setTextColor(Color.parseColor("gray"));
-        if (screen_type == 2)   btn1.setBackgroundResource(R.drawable.btn_round2);
-        else                    btn1.setBackgroundResource(R.drawable.btn_round);
-
-        btn2.setText("PLAY");
-        btn2.setTextColor(Color.parseColor("gray"));
-        if (screen_type == 2)   btn2.setBackgroundResource(R.drawable.btn_round2);
-        else                    btn2.setBackgroundResource(R.drawable.btn_round);
-
-        btn3.setText("PLAY");
-        btn3.setTextColor(Color.parseColor("gray"));
-        if (screen_type == 2)   btn3.setBackgroundResource(R.drawable.btn_round2);
-        else                    btn3.setBackgroundResource(R.drawable.btn_round);
-
-        btn1.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn2.setBackgroundTintList(null);   //マテリアルデザインの無効
-        btn3.setBackgroundTintList(null);   //マテリアルデザインの無効
-
-        switch (type){
-            case 1:
-                btn1.setText("STOP");
-                btn1.setTextColor(Color.parseColor("gray"));
-                btn1.setBackgroundResource(R.drawable.btn_stop);
-                break;
-            case 2:
-                btn2.setText("STOP");
-                btn2.setTextColor(Color.parseColor("gray"));
-                btn2.setBackgroundResource(R.drawable.btn_stop);
-                break;
-            case 3:
-                btn3.setText("STOP");
-                btn3.setTextColor(Color.parseColor("gray"));
-                btn3.setBackgroundResource(R.drawable.btn_stop);
-                break;
-        }
         play_random_delay = 0;
 
         switch(type) {
@@ -621,12 +514,19 @@ public class MainActivity extends AppCompatActivity
                 //タスククラスインスタンス生成
                 this.mainTimerTask1 = new MainTimerTask();
                 //タイマースケジュール設定＆開始
-                if (isEmergencyMode == true)    this.mainTimer1.schedule(mainTimerTask1, 500, 100);
-                else                            this.mainTimer1.schedule(mainTimerTask1, 500, play_delay);
+//                if (isEmergencyMode == true)    this.mainTimer1.schedule(mainTimerTask1, 500, 100);
+//                else                            this.mainTimer1.schedule(mainTimerTask1, 500, play_delay);
                 //ＢＧＭ
-                if (bell_kind == 2)         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_2);
-                else if (bell_kind == 3)    this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_3);
-                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_1);
+                soundSelect(bell_kind);
+                set_interval = soundInterval(play_delay);
+                if (set_interval < INTERVAL_1){
+                    set_interval = 100;
+                }
+                this.mainTimer1.schedule(mainTimerTask1, 500, set_interval);
+
+//                if (bell_kind == 2)         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_2);
+//                else if (bell_kind == 3)    this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_3);
+//                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_1);
 
                 if (this.mainTimer2 != null) {
                     this.mainTimer2.cancel();
@@ -655,12 +555,12 @@ public class MainActivity extends AppCompatActivity
                     tmp_gun_type = 1;   // 動画閲覧しないと設定反映されない
                 }
 
-                if (tmp_gun_type == 2)       this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_2);
-                else if (tmp_gun_type == 3)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_3);
-                else if (tmp_gun_type == 4)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firecracker);
-                else if (tmp_gun_type == 5)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firework);
-                else if (tmp_gun_type == 6)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.wolf);
-                else                         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
+//                if (tmp_gun_type == 2)       this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_2);
+//                else if (tmp_gun_type == 3)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_3);
+//                else if (tmp_gun_type == 4)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firecracker);
+//                else if (tmp_gun_type == 5)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firework);
+//                else if (tmp_gun_type == 6)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.wolf);
+//                else                         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
 
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
@@ -680,13 +580,13 @@ public class MainActivity extends AppCompatActivity
                 //タスククラスインスタンス生成
                 this.mainTimerTask3 = new MainTimerTask();
                 //タイマースケジュール設定＆開始
-                if (isEmergencyMode == true)    this.mainTimer3.schedule(mainTimerTask3, 500, 100);
-                else                            this.mainTimer3.schedule(mainTimerTask3, 500, play_delay);
+                this.mainTimer3.schedule(mainTimerTask3, 500, 100);
 
                 //ＢＧＭ
-                if (thunder_kind == 2)      this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_2);
-                else if (thunder_kind == 3) this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_3);
-                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_1);
+                soundSelect(thunder_kind);
+//                if (thunder_kind == 2)      this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_2);
+//                else if (thunder_kind == 3) this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_3);
+//                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_1);
 
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
@@ -717,41 +617,11 @@ public class MainActivity extends AppCompatActivity
             isplaying = true;
         }*/
 
-        TextView v = (TextView) findViewById(R.id.textView);
-        v.setBackgroundTintList(null);
         if (mode == 1) {
-            if (_language.equals("ja")) {
-                v.setText("緊急時の再生中です");
-            }
-            else if (_language.equals("zh")) {
-                v.setText("它是紧急的播放期间");
-            }
-            else if (_language.equals("ko")) {
-                v.setText("비상 재생 중입니다");
-            }
-            else {
-                v.setText("Playing in emergency");
-            }
-            v.setTextColor(Color.parseColor("red"));
         }
         else{
             light_OFF();
-            if (_language.equals("ja")) {
-                v.setText("通常再生中です");
-            }
-            else if (_language.equals("zh")) {
-                v.setText("它是在正常的时间正在播放");
-            }
-            else if (_language.equals("ko")) {
-                v.setText("보통 때 재생 중입니다");
-            }
-            else
-            {
-                v.setText("Normal playback is in progress");
-            }
-            v.setTextColor(Color.parseColor("blue"));
         }
-        v.setBackgroundResource(R.drawable.bak_grad);
 
         // 注意
         String mess = "";
@@ -769,33 +639,6 @@ public class MainActivity extends AppCompatActivity
     public void soundStop(int type){
         ImageShow();
         play_random_delay = 0;
-        switch (type){
-            case 1:
-                Button btn1 = (Button) findViewById(R.id.btn_bell);
-                btn1.setBackgroundTintList(null);
-                btn1.setText("PLAY");
-                btn1.setTextColor(Color.parseColor("gray"));
-                if (screen_type == 2)   btn1.setBackgroundResource(R.drawable.btn_round2);
-                else                    btn1.setBackgroundResource(R.drawable.btn_round);
-                break;
-            case 2:
-                Button btn2 = (Button) findViewById(R.id.btn_gun);
-                btn2.setBackgroundTintList(null);
-                btn2.setText("PLAY");
-                btn2.setTextColor(Color.parseColor("gray"));
-                if (screen_type == 2)   btn2.setBackgroundResource(R.drawable.btn_round2);
-                else                    btn2.setBackgroundResource(R.drawable.btn_round);
-                break;
-            case 3:
-                Button btn3 = (Button) findViewById(R.id.btn_thunder);
-                btn3.setBackgroundTintList(null);
-                btn3.setText("PLAY");
-                btn3.setTextColor(Color.parseColor("gray"));
-                if (screen_type == 2)   btn3.setBackgroundResource(R.drawable.btn_round2);
-                else                    btn3.setBackgroundResource(R.drawable.btn_round);
-                break;
-        }
-
         if (this.mainTimer1 != null) {
             this.mainTimer1.cancel();
             this.mainTimer1 = null;
@@ -813,23 +656,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         this.light_OFF();
-
-        TextView v = (TextView)findViewById(R.id.textView);
-        v.setBackgroundTintList(null);
-        if (_language.equals("ja")) {
-            v.setText("再生を中止しました");
-        }
-        else if (_language.equals("zh")) {
-            v.setText("中止播放");
-        }
-        else if (_language.equals("ko")) {
-            v.setText("재생을 중지했습니다");
-        }
-        else{
-            v.setText("Playback was canceled");
-        }
-        v.setTextColor(Color.parseColor("white"));
-        v.setBackgroundResource(R.drawable.bak_grad2);
     }
 
     //  「ベル」ボタン
@@ -882,10 +708,11 @@ public class MainActivity extends AppCompatActivity
 
     // TIPS処理
     public void onTips(View view) {
+
         // 再生中
         if (this.mainTimer1 != null || this.mainTimer2 != null ||
             this.mainTimer3 != null || emergency_playing == true ){
-            /* 何もしない */
+            //何もしない
         }
         // 全て停止中
         else{
@@ -1508,4 +1335,302 @@ public class MainActivity extends AppCompatActivity
             ShowRatingPopupNG();
         }
     }
+
+    /****************************************************
+        新画面処理
+     ***************************************************/
+
+    /* **************************************************
+        表示処理
+    ****************************************************/
+    public void screen_display(){
+        /* SEEK */
+        if (seek_volume2 == null) {
+            seek_volume2 = (SeekBar) findViewById(R.id.seek_volume2);
+        }
+        if (sound_volume > 15)  sound_volume = 15;
+        seek_volume2.setProgress(sound_volume);
+
+        /* SPINNER */
+        if (sp_sound1 == null) {
+            sp_sound1 = (Spinner) findViewById(R.id.sp_sound1);
+        }
+        if (bell_kind > 10)  bell_kind = 10 - 1;
+        sp_sound1.setSelection(bell_kind);  //通常 鈴音
+
+        if (sp_sound2 == null) {
+            sp_sound2 = (Spinner) findViewById(R.id.sp_sound2);
+        }
+        if (thunder_kind > 10)  thunder_kind = 10 -1;
+        sp_sound2.setSelection(thunder_kind);   //SOS 雷鳴音
+
+        if (sp_light2 == null) {
+            sp_light2 = (Spinner) findViewById(R.id.sp_light2);
+        }
+        sp_light2.setSelection(2); //TODO:パラメータ必要
+
+        if (sp_interval == null) {
+            sp_interval = (Spinner) findViewById(R.id.sp_interval);
+        }
+        if (play_delay > 9)  play_delay = 9 -1;
+        sp_interval.setSelection(play_delay); //TODO:検討必要
+
+
+        //再生中の表示切り替え
+        LinearLayout layout_normal = findViewById(R.id.linearLayout11);
+        LinearLayout layout_emer = findViewById(R.id.linearLayout21);
+        ImageView img_normal = (ImageView) findViewById(R.id.img_normal);
+        ImageView img_emer = (ImageView) findViewById(R.id.img_emergency);
+
+        if (mainTimer1 == null){
+            img_normal.setImageResource(R.drawable.bell_off2);
+            layout_normal.setBackgroundResource(R.drawable.bak_inactive);
+        }
+        else{
+            img_normal.setImageResource(R.drawable.bell_on2);
+            layout_normal.setBackgroundResource(R.drawable.bak_active);
+        }
+        if (mainTimer3 == null){
+            img_emer.setImageResource(R.drawable.sos_off2);
+            layout_emer.setBackgroundResource(R.drawable.bak_inactive);
+        }
+        else{
+            img_emer.setImageResource(R.drawable.sos_on2);
+            layout_emer.setBackgroundResource(R.drawable.bak_active);
+        }
+
+        TextView v = (TextView) findViewById(R.id.textView);
+        v.setBackgroundTintList(null);
+        if(soundIsPlaying() == false){
+             if (_language.equals("ja")) {
+                v.setText("通常音 or 緊急音を選択して\n「PLAY」をタップして下さい");
+            }
+            else{
+                 v.setText("通常音 or 緊急音を選択して\n「PLAY」をタップして下さい");
+            }
+            v.setTextColor(Color.parseColor("black"));
+        }
+        else{
+            if (_language.equals("ja")) {
+                v.setText("＊＊注意＊＊ アプリを閉じても\n再生は継続します。停止する場合は\n「STOP」をタップして下さい");
+            }
+            else{
+                v.setText("＊＊注意＊＊ アプリを閉じても\n再生は継続します。停止する場合は\n「STOP」をタップして下さい");
+            }
+            v.setTextColor(Color.parseColor("red"));
+        }
+    }
+
+
+    /* **************************************************
+        アプリボタン処理
+    ****************************************************/
+    public void toggleSelect(){
+        toggle_normal = (ToggleButton) findViewById(R.id.toggle_normal);
+        toggle_emergency = (ToggleButton) findViewById(R.id.toggle_emergency);
+
+        toggle_normal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    toggle_emergency.setChecked(false);
+                    soundStart(1,  0);
+                } else {
+                    soundStop(1);
+                }
+                screen_display();
+            }
+        });
+
+        toggle_emergency.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    toggle_normal.setChecked(false);
+                    soundStart(3, 0);
+                } else {
+                    soundStop(2);
+                }
+                screen_display();
+            }
+        });
+
+        screen_display();
+    }
+
+    public boolean soundIsPlaying(){
+
+        if (this.mainTimer1 != null){
+            return true;
+        }
+        if (this.mainTimer2 != null){
+            return true;
+        }
+        if (this.mainTimer3 != null){
+            return true;
+        }
+        return false;
+    }
+
+    public void seekSelect(){
+        //  通常音の音量
+        seek_volume2 = (SeekBar)findViewById(R.id.seek_volume2);
+        seek_volume2.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    //ツマミをドラッグした時
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                        if (soundIsPlaying() == false) {
+                            AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                            sound_volume = seekBar.getProgress();
+                            int tmp_volume = sound_volume;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                tmp_volume = tmp_volume * 2;  //30段階になったため
+                            }
+                            am.setStreamVolume(AudioManager.STREAM_MUSIC, tmp_volume, 0);
+                        }
+                        screen_display();
+                    }
+                    //ツマミに触れた時
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+                    //ツマミを離した時
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                }
+        );
+    }
+
+    public void spinnerSelect(){
+
+        //  スピナー（通常音）
+        sp_sound1 = (Spinner)findViewById(R.id.sp_sound1);
+        sp_sound1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            //何も選択されなかった時の動作
+            @Override
+            public void onNothingSelected(AdapterView adapterView) {
+            }
+            @Override
+            public void onItemSelected(AdapterView parent, View view, int position, long id) {
+                if (soundIsPlaying() == false){
+                    bell_kind = position;
+                }
+                screen_display();
+            }
+        });
+        //  スピナー（SOS音）
+        sp_sound2 = (Spinner)findViewById(R.id.sp_sound2);
+        sp_sound2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            //何も選択されなかった時の動作
+            @Override
+            public void onNothingSelected(AdapterView adapterView) {
+            }
+            @Override
+            public void onItemSelected(AdapterView parent, View view, int position, long id) {
+                if (soundIsPlaying() == false) {
+                    thunder_kind = position;
+                }
+                screen_display();
+            }
+        });
+
+        //  スピナー（通常ライト）
+        sp_light2 = (Spinner)findViewById(R.id.sp_light2);
+        sp_light2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            //何も選択されなかった時の動作
+            @Override
+            public void onNothingSelected(AdapterView adapterView) {
+            }
+            @Override
+            public void onItemSelected(AdapterView parent, View view, int position, long id) {
+                if (soundIsPlaying() == false) {
+//                    db_light2 = position;
+                }
+                screen_display();
+            }
+        });
+
+        //  スピナー（再生間隔ライト）
+        sp_interval = (Spinner)findViewById(R.id.sp_interval);
+        sp_interval.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            //何も選択されなかった時の動作
+            @Override
+            public void onNothingSelected(AdapterView adapterView) {
+            }
+            @Override
+            public void onItemSelected(AdapterView parent, View view, int position, long id) {
+                if (soundIsPlaying() == false) {
+                    play_delay = position;
+                }
+                screen_display();
+            }
+        });
+        screen_display();
+    }
+
+    public void soundSelect(int type){
+
+        switch (type){
+            default:
+                this.countText = null;
+            case 0:
+                this.countText = null;
+                break;
+            case 1:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_1);
+                break;
+            case 2:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_2);
+                break;
+            case 3:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_3);
+                break;
+            case 4:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_1);
+                break;
+            case 5:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_2);
+                break;
+            case 6:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_3);
+                break;
+            case 7:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firecracker);
+                break;
+            case 8:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firework);
+                break;
+            case 9:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.wolf);
+                break;
+
+        }
+    }
+
+    public int soundInterval(int type) {
+
+        switch (type) {
+            case 0:
+                return INTERVAL_0;
+            case 1:
+                return INTERVAL_1;
+            case 2:
+                return INTERVAL_3;
+            case 3:
+                return INTERVAL_5;
+            case 4:
+                return INTERVAL_7;
+            case 5:
+                return INTERVAL_10;
+            case 6:
+                return INTERVAL_15;
+            case 7:
+                return INTERVAL_20;
+            case 8:
+                return INTERVAL_30;
+        }
+        return INTERVAL_0;
+    }
+
+
 }

@@ -154,4 +154,53 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="list_sound1">
+        <item>通常音:---</item>
+        <item>鈴音1</item>
+        <item>鈴音2</item>
+        <item>鈴音3</item>
+        <item>雷鳴1</item>
+        <item>雷鳴2</item>
+        <item>雷鳴3</item>
+        <item>爆竹</item>
+        <item>花火</item>
+        <item>ラジオ</item>
+        <item>ﾎｲｯｽﾙ</item>
+        <item>狼遠吠え</item>
+    </string-array>
+
+    <string-array name="list_sound2">
+        <item>SOS音:---</item>
+        <item>鈴音1</item>
+        <item>鈴音2</item>
+        <item>鈴音3</item>
+        <item>雷鳴1</item>
+        <item>雷鳴2</item>
+        <item>雷鳴3</item>
+        <item>爆竹</item>
+        <item>花火</item>
+        <item>ラジオ</item>
+        <item>ﾎｲｯｽﾙ</item>
+        <item>狼遠吠え</item>
+    </string-array>
+
+    <string-array name="list_light">
+        <item>ﾗｲﾄ:OFF</item>
+        <item>ﾗｲﾄ:ON</item>
+        <item>ﾗｲﾄ:点滅</item>
+    </string-array>
+
+    <string-array name="list_interval">
+        <item>間隔:0秒</item>
+        <item>間隔:1秒</item>
+        <item>間隔:3秒</item>
+        <item>間隔:5秒</item>
+        <item>間隔:7秒s</item>
+        <item>間隔:10秒</item>
+        <item>間隔:15秒</item>
+        <item>間隔:20秒</item>
+        <item>間隔:30秒</item>
+    </string-array>
+
 </resources>

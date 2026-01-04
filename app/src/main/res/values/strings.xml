@@ -163,4 +163,52 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="list_sound1">
+        <item>Normal Sound</item>
+        <item>BELL 1</item>
+        <item>BELL 2</item>
+        <item>BELL 3</item>
+        <item>THUNDER 1</item>
+        <item>THUNDER 2</item>
+        <item>THUNDER 3</item>
+        <item>FIRECRACKER</item>
+        <item>FIREWORK</item>
+        <item>RADIO</item>
+        <item>WHISTLE</item>
+        <item>WOLF</item>
+    </string-array>
+
+    <string-array name="list_sound2">
+        <item>Emergency Sound</item>
+        <item>BELL 1</item>
+        <item>BELL 2</item>
+        <item>BELL 3</item>
+        <item>THUNDER 1</item>
+        <item>THUNDER 2</item>
+        <item>THUNDER 3</item>
+        <item>FIRECRACKER</item>
+        <item>FIREWORK</item>
+        <item>RADIO</item>
+        <item>WOLF</item>
+    </string-array>
+
+    <string-array name="list_light">
+        <item>Light:OFF</item>
+        <item>Light:ON</item>
+        <item>Light:FLASH</item>
+    </string-array>
+
+    <string-array name="list_interval">
+        <item>Interval:  0 SEC</item>
+        <item>Interval:  1 SEC</item>
+        <item>Interval:  3 SEC</item>
+        <item>Interval:  5 SEC</item>
+        <item>Interval:  7 SEC</item>
+        <item>Interval: 10 SEC</item>
+        <item>Interval: 15 SEC</item>
+        <item>Interval: 20 SEC</item>
+        <item>Interval: 30 SEC</item>
+    </string-array>
+
+
 </resources>
