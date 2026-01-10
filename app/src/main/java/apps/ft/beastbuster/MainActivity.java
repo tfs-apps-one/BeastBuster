@@ -148,8 +148,20 @@ public class MainActivity extends AppCompatActivity
     private int db_data3 = 0;   //オプション音（爆竹音）
     private int db_data4 = 0;   //評価ポップアップ
     private int db_data5 = 0;
+    private int db_normal = 0;
+    private int db_emergency = 0;
+    private int db_interval = 0;
+    private int db_volume1 = 0;
+    private int db_volume2 = 0;
+    private int db_light1 = 0;
+    private int db_light2 = 0;
+    private int db_data6 = 0;
+    private int db_data7 = 0;
+    private int db_data8 = 0;
+    private int db_data9 = 0;
+    private int db_data10 = 0;
 
-//test_make
+//TODO:test_make
     final int PLAY_INIT_COUNT = 450;    //30分程度
 //    final int PLAY_INIT_COUNT = 5;      //30分程度
     final int PLAY_1800 = 1800;         //2H
@@ -165,11 +177,11 @@ public class MainActivity extends AppCompatActivity
 
     //評価ポップアップ
     private int ReviewCount = 1;
- //test_make
+ //TODO:test_make
     private int REVIEW_POP = 7; //評価ポップアップ
 
     // テストID 動画リワード
-//test_make ※※本物を使うこと！！
+//TODO:test_make ※※本物を使うこと！！
     private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
@@ -178,7 +190,7 @@ public class MainActivity extends AppCompatActivity
     // 本物
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
 
-//test_make ※※本番を使うこと！！
+//TODO:test_make ※※本番を使うこと！！
     //インタースティシャル広告
     private InterstitialAd mInterstitialAd;
     //本番ID
@@ -192,12 +204,9 @@ public class MainActivity extends AppCompatActivity
     private int set_interval;
     private Spinner sp_sound1;      //通常音選択
     private Spinner sp_sound2;      //SOS音選択
-    private Spinner sp_light1;      //通常ライト選択
     private Spinner sp_light2;      //SOSライト選択
     private Spinner sp_interval;    //再生間隔
-
     private SeekBar seek_volume1;    //通常音量
-    private SeekBar seek_volume2;    //SOS音量
 
     private ToggleButton toggle_normal;      //通常音状態（ON/OFF）
     private ToggleButton toggle_emergency;   //異常音状態（ON/OFF）
@@ -211,6 +220,7 @@ public class MainActivity extends AppCompatActivity
     final private int INTERVAL_15 = 15000;
     final private int INTERVAL_20 = 20000;
     final private int INTERVAL_30 = 30000;
+    final private int INTERVAL_RANDUM = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -387,7 +397,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // 動画視聴の日付
-        db_data2 = getNowDate();
+        //db_data2 = getNowDate();
 
         //ユーザーレベルアップ
         if (_language.equals("ja")) {
@@ -457,12 +467,7 @@ public class MainActivity extends AppCompatActivity
         //DB load
         helper = new MyOpenHelper(this);
         AppDBInitRoad();
-
-/*        if (db_user_lv < 5)
-        {
-            screen_type = 1;
-        }*/
-
+        
         //TODO:
         if (db_data1 == 0) {
             db_data1 = PLAY_INIT_COUNT;
@@ -514,19 +519,20 @@ public class MainActivity extends AppCompatActivity
                 //タスククラスインスタンス生成
                 this.mainTimerTask1 = new MainTimerTask();
                 //タイマースケジュール設定＆開始
-//                if (isEmergencyMode == true)    this.mainTimer1.schedule(mainTimerTask1, 500, 100);
-//                else                            this.mainTimer1.schedule(mainTimerTask1, 500, play_delay);
                 //ＢＧＭ
-                soundSelect(bell_kind);
-                set_interval = soundInterval(play_delay);
-                if (set_interval < INTERVAL_1){
+                soundSelect(db_normal);
+                set_interval = soundInterval(db_interval);
+                if (set_interval == INTERVAL_RANDUM){
+                    isRandomMode = true;
                     set_interval = 100;
                 }
+                else {
+                    isRandomMode = false;
+                    if (set_interval < INTERVAL_1) {
+                        set_interval = 100;
+                    }
+                }
                 this.mainTimer1.schedule(mainTimerTask1, 500, set_interval);
-
-//                if (bell_kind == 2)         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_2);
-//                else if (bell_kind == 3)    this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_3);
-//                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.bell_1);
 
                 if (this.mainTimer2 != null) {
                     this.mainTimer2.cancel();
@@ -554,14 +560,6 @@ public class MainActivity extends AppCompatActivity
                 if (db_data3 < 1 && (gun_kind == 4 || gun_kind == 5 || gun_kind == 6)){
                     tmp_gun_type = 1;   // 動画閲覧しないと設定反映されない
                 }
-
-//                if (tmp_gun_type == 2)       this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_2);
-//                else if (tmp_gun_type == 3)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_3);
-//                else if (tmp_gun_type == 4)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firecracker);
-//                else if (tmp_gun_type == 5)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.firework);
-//                else if (tmp_gun_type == 6)  this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.wolf);
-//                else                         this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.gun_1);
-
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
                     this.mainTimer1 = null;
@@ -581,13 +579,9 @@ public class MainActivity extends AppCompatActivity
                 this.mainTimerTask3 = new MainTimerTask();
                 //タイマースケジュール設定＆開始
                 this.mainTimer3.schedule(mainTimerTask3, 500, 100);
-
                 //ＢＧＭ
-                soundSelect(thunder_kind);
-//                if (thunder_kind == 2)      this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_2);
-//                else if (thunder_kind == 3) this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_3);
-//                else                        this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.thunder_1);
-
+                soundSelect(db_emergency);
+                isRandomMode = false;
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
                     this.mainTimer1 = null;
@@ -605,17 +599,11 @@ public class MainActivity extends AppCompatActivity
         //音量調整
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
        // 音量を設定する
-        int tmp_volume = sound_volume;
+        int tmp_volume = db_volume1;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            tmp_volume = sound_volume * 2;  //30段階になったため
+            tmp_volume = db_volume1 * 2;  //30段階になったため
         }
         am.setStreamVolume(AudioManager.STREAM_MUSIC, tmp_volume, 0);
-
-/*        if (bgm.isPlaying() == false) {
-            bgm.setLooping(true);
-            bgm.start();
-            isplaying = true;
-        }*/
 
         if (mode == 1) {
         }
@@ -859,6 +847,19 @@ public class MainActivity extends AppCompatActivity
         int data2 = 0;
         int data3 = 0;
         int data4 = 0;
+        int data5 = 0;
+        int normal = 0;
+        int emergency = 0;
+        int interval = 0;
+        int volume1 = 0;
+        int volume2 = 0;
+        int light1 = 0;
+        int light2 = 0;
+        int data6 = 0;
+        int data7 = 0;
+        int data8 = 0;
+        int data9 = 0;
+        int data10 = 0;
 
         SQLiteDatabase db = helper.getReadableDatabase();
         StringBuilder sql = new StringBuilder();
@@ -869,6 +870,18 @@ public class MainActivity extends AppCompatActivity
         sql.append(" ,data3");
         sql.append(" ,data4");
         sql.append(" ,data5");
+        sql.append(" ,normal");
+        sql.append(" ,emergency");
+        sql.append(" ,interval");
+        sql.append(" ,volume1");
+        sql.append(" ,volume2");
+        sql.append(" ,light1");
+        sql.append(" ,light2");
+        sql.append(" ,data6");
+        sql.append(" ,data7");
+        sql.append(" ,data8");
+        sql.append(" ,data9");
+        sql.append(" ,data10");
         sql.append(" FROM appinfo;");
         try {
             Cursor cursor = db.rawQuery(sql.toString(), null);
@@ -880,6 +893,19 @@ public class MainActivity extends AppCompatActivity
                 data2 = cursor.getInt(2);
                 data3 = cursor.getInt(3);
                 data4 = cursor.getInt(4);
+                data5 = cursor.getInt(5);
+                normal = cursor.getInt(6);
+                emergency = cursor.getInt(7);
+                interval = cursor.getInt(8);
+                volume1 = cursor.getInt(9);
+                volume2 = cursor.getInt(10);
+                light1 = cursor.getInt(11);
+                light2 = cursor.getInt(12);
+                data6 = cursor.getInt(13);
+                data7 = cursor.getInt(14);
+                data8 = cursor.getInt(15);
+                data9 = cursor.getInt(16);
+                data10 = cursor.getInt(17);
             }
         } finally {
             db.close();
@@ -897,25 +923,49 @@ public class MainActivity extends AppCompatActivity
             insertValues.put("data3", 0);
             insertValues.put("data4", 0);
             insertValues.put("data5", 0);
+            insertValues.put("normal", 0);
+            insertValues.put("emergency", 0);
+            insertValues.put("interval", 0);
+            insertValues.put("volume1", 3);
+            insertValues.put("volume2", 0);
+            insertValues.put("light1", 0);
+            insertValues.put("light2", 0);
+            insertValues.put("data6", 0);
+            insertValues.put("data7", 0);
+            insertValues.put("data8", 0);
+            insertValues.put("data9", 0);
+            insertValues.put("data10", 0);
             try {
                 ret = db.insert("appinfo", null, insertValues);
             } finally {
                 db.close();
             }
-            /*
             if (ret == -1) {
                 Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
             }
-             */
+
         } else {
             db_user_lv = data;
             db_data1 = data1;
             db_data2 = data2;
             db_data3 = data3;
             db_data4 = data4;
-            /*  Toast.makeText(this, "Data Loading...  Access Level:" + user_lv, Toast.LENGTH_SHORT).show();*/
+            db_data5 = data5;
+            db_normal = normal;
+            db_emergency = emergency;
+            db_interval = interval;
+            db_volume1 = volume1;
+            db_volume2 = volume2;
+            db_light1 = light1;
+            db_light2 = light2;
+            db_data6 = data6;
+            db_data7 = data7;
+            db_data8 = data8;
+            db_data9 = data9;
+            db_data10 = data10;
+            Toast.makeText(this, "Data Loading...  Access Level:" + db_user_lv, Toast.LENGTH_SHORT).show();
         }
     }
     /* DB更新 */
@@ -928,20 +978,29 @@ public class MainActivity extends AppCompatActivity
         insertValues.put("data3", db_data3);
         insertValues.put("data4", db_data4);
         insertValues.put("data5", db_data5);
-
+        insertValues.put("normal", db_normal);
+        insertValues.put("emergency", db_emergency);
+        insertValues.put("interval", db_interval);
+        insertValues.put("volume1", db_volume1);
+        insertValues.put("volume2", db_volume2);
+        insertValues.put("light1", db_light1);
+        insertValues.put("light2", db_light2);
+        insertValues.put("data6", db_data6);
+        insertValues.put("data7", db_data7);
+        insertValues.put("data8", db_data8);
+        insertValues.put("data9", db_data9);
+        insertValues.put("data10", db_data10);
         int ret;
         try {
             ret = db.update("appinfo", insertValues, null, null);
         } finally {
             db.close();
         }
-        /*
         if (ret == -1){
             Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Saving.... OK ", Toast.LENGTH_SHORT).show();
         }
-         */
     }
 
     @Override
@@ -1345,35 +1404,35 @@ public class MainActivity extends AppCompatActivity
     ****************************************************/
     public void screen_display(){
         /* SEEK */
-        if (seek_volume2 == null) {
-            seek_volume2 = (SeekBar) findViewById(R.id.seek_volume2);
+        if (seek_volume1 == null) {
+            seek_volume1 = (SeekBar) findViewById(R.id.seek_volume1);
         }
-        if (sound_volume > 15)  sound_volume = 15;
-        seek_volume2.setProgress(sound_volume);
+        if (db_volume1 > 15)  db_volume1 = 15;
+        seek_volume1.setProgress(db_volume1);
 
         /* SPINNER */
         if (sp_sound1 == null) {
             sp_sound1 = (Spinner) findViewById(R.id.sp_sound1);
         }
-        if (bell_kind > 10)  bell_kind = 10 - 1;
-        sp_sound1.setSelection(bell_kind);  //通常 鈴音
+        if (db_normal > 11)  db_normal = 11 - 1;
+        sp_sound1.setSelection(db_normal);  //通常 鈴音
 
         if (sp_sound2 == null) {
             sp_sound2 = (Spinner) findViewById(R.id.sp_sound2);
         }
-        if (thunder_kind > 10)  thunder_kind = 10 -1;
-        sp_sound2.setSelection(thunder_kind);   //SOS 雷鳴音
+        if (db_emergency > 11)  db_emergency = 11 -1;
+        sp_sound2.setSelection(db_emergency);   //SOS 雷鳴音
 
         if (sp_light2 == null) {
             sp_light2 = (Spinner) findViewById(R.id.sp_light2);
         }
-        sp_light2.setSelection(2); //TODO:パラメータ必要
+        sp_light2.setSelection(db_light2);
 
         if (sp_interval == null) {
             sp_interval = (Spinner) findViewById(R.id.sp_interval);
         }
-        if (play_delay > 9)  play_delay = 9 -1;
-        sp_interval.setSelection(play_delay); //TODO:検討必要
+        if (db_interval > 10)  db_interval = 10 -1;
+        sp_interval.setSelection(db_interval);
 
 
         //再生中の表示切り替え
@@ -1406,7 +1465,7 @@ public class MainActivity extends AppCompatActivity
                 v.setText("通常音 or 緊急音を選択して\n「PLAY」をタップして下さい");
             }
             else{
-                 v.setText("通常音 or 緊急音を選択して\n「PLAY」をタップして下さい");
+                 v.setText("Select Normal or Emergency Sound\nand tap [PLAY]");
             }
             v.setTextColor(Color.parseColor("black"));
         }
@@ -1415,7 +1474,7 @@ public class MainActivity extends AppCompatActivity
                 v.setText("＊＊注意＊＊ アプリを閉じても\n再生は継続します。停止する場合は\n「STOP」をタップして下さい");
             }
             else{
-                v.setText("＊＊注意＊＊ アプリを閉じても\n再生は継続します。停止する場合は\n「STOP」をタップして下さい");
+                v.setText("**NOTICE**\nPlayback stays active after closing.\nTap [STOP] to turn it off.");
             }
             v.setTextColor(Color.parseColor("red"));
         }
@@ -1472,16 +1531,16 @@ public class MainActivity extends AppCompatActivity
 
     public void seekSelect(){
         //  通常音の音量
-        seek_volume2 = (SeekBar)findViewById(R.id.seek_volume2);
-        seek_volume2.setOnSeekBarChangeListener(
+        seek_volume1 = (SeekBar)findViewById(R.id.seek_volume1);
+        seek_volume1.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
                     //ツマミをドラッグした時
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                         if (soundIsPlaying() == false) {
                             AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-                            sound_volume = seekBar.getProgress();
-                            int tmp_volume = sound_volume;
+                            db_volume1 = seekBar.getProgress();
+                            int tmp_volume = db_volume1;
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                 tmp_volume = tmp_volume * 2;  //30段階になったため
                             }
@@ -1513,7 +1572,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false){
-                    bell_kind = position;
+                    db_normal = position;
                 }
                 screen_display();
             }
@@ -1528,7 +1587,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false) {
-                    thunder_kind = position;
+                    db_emergency = position;
                 }
                 screen_display();
             }
@@ -1544,7 +1603,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false) {
-//                    db_light2 = position;
+                    db_light2 = position;
                 }
                 screen_display();
             }
@@ -1560,7 +1619,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false) {
-                    play_delay = position;
+                    db_interval = position;
                 }
                 screen_display();
             }
@@ -1603,7 +1662,9 @@ public class MainActivity extends AppCompatActivity
             case 9:
                 this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.wolf);
                 break;
-
+            case 10:
+                this.countText = (MediaPlayer) MediaPlayer.create(this, R.raw.peco);
+                break;
         }
     }
 
@@ -1628,6 +1689,8 @@ public class MainActivity extends AppCompatActivity
                 return INTERVAL_20;
             case 8:
                 return INTERVAL_30;
+            case 9:
+                return INTERVAL_RANDUM;
         }
         return INTERVAL_0;
     }

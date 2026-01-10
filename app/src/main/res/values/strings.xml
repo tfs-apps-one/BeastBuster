@@ -173,9 +173,8 @@
         <item>THUNDER 3</item>
         <item>FIRECRACKER</item>
         <item>FIREWORK</item>
-        <item>RADIO</item>
-        <item>WHISTLE</item>
         <item>WOLF</item>
+        <item>PET BOTTLE</item>
     </string-array>
 
     <string-array name="list_sound2">
@@ -188,26 +187,27 @@
         <item>THUNDER 3</item>
         <item>FIRECRACKER</item>
         <item>FIREWORK</item>
-        <item>RADIO</item>
         <item>WOLF</item>
+        <item>PET BOTTLE</item>
     </string-array>
 
     <string-array name="list_light">
-        <item>Light:OFF</item>
-        <item>Light:ON</item>
-        <item>Light:FLASH</item>
+        <item>OFF</item>
+        <item>ON</item>
+        <item>FLASH</item>
     </string-array>
 
     <string-array name="list_interval">
-        <item>Interval:  0 SEC</item>
-        <item>Interval:  1 SEC</item>
-        <item>Interval:  3 SEC</item>
-        <item>Interval:  5 SEC</item>
-        <item>Interval:  7 SEC</item>
-        <item>Interval: 10 SEC</item>
-        <item>Interval: 15 SEC</item>
-        <item>Interval: 20 SEC</item>
-        <item>Interval: 30 SEC</item>
+        <item>Interval: 0s</item>
+        <item>Interval: 1s</item>
+        <item>Interval: 3s</item>
+        <item>Interval: 5s</item>
+        <item>Interval: 7s</item>
+        <item>Interval:10s</item>
+        <item>Interval:15s</item>
+        <item>Interval:20s</item>
+        <item>Interval:30s</item>
+        <item>Random</item>
     </string-array>
 
 

@@ -44,7 +44,7 @@
                 android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:text="----"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -286,7 +286,7 @@
                 android:src="@drawable/volume_up" />
 
             <SeekBar
-                android:id="@+id/seek_volume2"
+                android:id="@+id/seek_volume1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"

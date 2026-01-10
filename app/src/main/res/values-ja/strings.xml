@@ -165,9 +165,8 @@
         <item>雷鳴3</item>
         <item>爆竹</item>
         <item>花火</item>
-        <item>ラジオ</item>
-        <item>ﾎｲｯｽﾙ</item>
         <item>狼遠吠え</item>
+        <item>ﾍﾟｯﾄﾎﾞﾄﾙ</item>
     </string-array>
 
     <string-array name="list_sound2">
@@ -180,9 +179,8 @@
         <item>雷鳴3</item>
         <item>爆竹</item>
         <item>花火</item>
-        <item>ラジオ</item>
-        <item>ﾎｲｯｽﾙ</item>
         <item>狼遠吠え</item>
+        <item>ﾍﾟｯﾄﾎﾞﾄﾙ</item>
     </string-array>
 
     <string-array name="list_light">
@@ -196,11 +194,12 @@
         <item>間隔:1秒</item>
         <item>間隔:3秒</item>
         <item>間隔:5秒</item>
-        <item>間隔:7秒s</item>
+        <item>間隔:7秒</item>
         <item>間隔:10秒</item>
         <item>間隔:15秒</item>
         <item>間隔:20秒</item>
         <item>間隔:30秒</item>
+        <item>間隔:ﾗﾝﾀﾞﾑ</item>
     </string-array>
 
 </resources>
