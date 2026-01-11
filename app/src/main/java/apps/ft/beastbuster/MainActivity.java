@@ -108,6 +108,9 @@ public class MainActivity extends AppCompatActivity
     private Timer emerTimer;					//タイマー用
     private EmerTimerTask emerTimerTask;		//タイマタスククラス
     private Handler eHandler = new Handler();   //UI Threadへのpost用ハンドラ
+    private Timer blinkTimer;					//タイマー用
+    private BlinkingTask blinkTimerTask;		//タイマタスククラス
+    private Handler bHandler = new Handler();   //UI Threadへのpost用ハンドラ
 
     //設定関連
     private int sound_volume = 0;
@@ -122,6 +125,7 @@ public class MainActivity extends AppCompatActivity
     private boolean isEmergencyMode = false;
     private boolean volume_back = false;
     //ライト関連
+    private boolean blinking = false;
     private CameraManager mCameraManager;
     private String mCameraId = null;
     private boolean isOn = false;
@@ -229,6 +233,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
+        //TODO:ダークモード禁止処理
 
         //  国設定
         _local = Locale.getDefault();
@@ -259,7 +264,6 @@ public class MainActivity extends AppCompatActivity
 
         //動画リワード
         loadRewardedAd();
-
         //インタースティシャル広告
         loadInterstitialAd();
 
@@ -267,7 +271,6 @@ public class MainActivity extends AppCompatActivity
         toggleSelect();
         seekSelect();
         spinnerSelect();
-        screen_display();
     }
 
     /************************************************************
@@ -384,30 +387,24 @@ public class MainActivity extends AppCompatActivity
 //  public void onRewarded(RewardItem reward) {
         // Reward the user.
 
+        int tmp_data = db_data3;
         // 再生回数のセット
-        int tmp_data = db_data1;
-        switch (tmp_data){
-            case PLAY_INIT_COUNT:   db_data1 = PLAY_1800;   break;
-            case PLAY_1800:         db_data1 = PLAY_4500;   break;
-            case PLAY_4500:         db_data1 = PLAY_9000;   break;
-
-            default:                db_data1 = tmp_data + PLAY_PLUS;
-                                    db_data3 = 1;   //爆竹と花火を有効
-                                    break;
+        db_data3 += 1;   //爆竹と花火を有効
+        if (db_data3 > 2){
+            db_data3 = 2;
         }
-
         // 動画視聴の日付
         //db_data2 = getNowDate();
 
         //ユーザーレベルアップ
         if (_language.equals("ja")) {
-            Toast.makeText(this, "連続回数UP!：" + (tmp_data) + "  → " + (db_data1), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "連続回数UP!：" + (tmp_data) + "  → " + (db_data3), Toast.LENGTH_SHORT).show();
         }
         else{
-            Toast.makeText(this, "COUNT UP!：" + (tmp_data) + "  → " + (db_data1), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "COUNT UP!：" + (tmp_data) + "  → " + (db_data3), Toast.LENGTH_SHORT).show();
         }
         AppDBUpdated();
-        ImageShow();
+        screen_display();
         loadRewardedAd();   //リワード動画再生の準備
     }
 
@@ -467,13 +464,7 @@ public class MainActivity extends AppCompatActivity
         //DB load
         helper = new MyOpenHelper(this);
         AppDBInitRoad();
-        
-        //TODO:
-        if (db_data1 == 0) {
-            db_data1 = PLAY_INIT_COUNT;
-        }
-
-        ImageShow();
+        screen_display();
 
         //評価ポップアップ処理
         if (db_data4 <= REVIEW_POP){
@@ -483,16 +474,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
         ShowRatingPopup();
-    }
-    public void ImageShow()
-    {
-
-        /*
-        ProgressBar prog = (ProgressBar) findViewById(R.id.progress);
-        prog.setMin(0);
-        prog.setMax(100);
-        prog.setProgress(temp_prog);
-         */
     }
 
     /* 効果音スタート */
@@ -509,7 +490,6 @@ public class MainActivity extends AppCompatActivity
             isEmergencyMode = true;
         }
 
-        ImageShow();
         play_random_delay = 0;
 
         switch(type) {
@@ -605,7 +585,9 @@ public class MainActivity extends AppCompatActivity
         }
         am.setStreamVolume(AudioManager.STREAM_MUSIC, tmp_volume, 0);
 
-        if (mode == 1) {
+        //ライト点灯処理
+        if (type == 3) {
+            light_ON(db_light2);
         }
         else{
             light_OFF();
@@ -625,7 +607,6 @@ public class MainActivity extends AppCompatActivity
 
     /* 効果音ストップ */
     public void soundStop(int type){
-        ImageShow();
         play_random_delay = 0;
         if (this.mainTimer1 != null) {
             this.mainTimer1.cancel();
@@ -642,56 +623,12 @@ public class MainActivity extends AppCompatActivity
             this.mainTimer3 = null;
             fullAdDisplay();
         }
+        if (this.blinkTimer != null) {
+            this.blinkTimer.cancel();
+            this.blinkTimer = null;
+        }
 
         this.light_OFF();
-    }
-
-    //  「ベル」ボタン
-    public void onBell(View view){
-        if (this.mainTimer1 != null)  soundStop(1);
-        else                            soundStart(1, 0);
-    }
-    //  「銃」ボタン
-    public void onGun(View view){
-        if (this.mainTimer2 != null)  soundStop(2);
-        else                            soundStart(2, 0);
-    }
-    //  「雷」ボタン
-    public void onThunder(View view){
-        if (this.mainTimer3 != null)  soundStop(3);
-        else                            soundStart(3, 0);
-    }
-    //  「緊急」ボタン
-    public void onEmergency(View view){
-        pitch_zero = 0;
-        roll_minus = 0;
-        roll_plus = 0;
-        emergency_Start();
-    }
-
-    // 緊急時の再生処理
-    public void emergency_Start()
-    {
-        if (emergency_playing == false) {
-            if (emergency_kind.equals("none") == true)
-            {
-                return;
-            }
-            emergency_playing = true;
-            if (emergency_kind.equals("bell") == true){
-                soundStop(1);
-                soundStart(1, 1);
-            }
-            else if (emergency_kind.equals("gun")== true){
-                soundStop(2);
-                soundStart(2, 1);
-            }
-            else if (emergency_kind.equals("thunder") == true){
-                soundStop(3);
-                soundStart(3, 1);
-            }
-            light_ON();
-        }
     }
 
     // TIPS処理
@@ -774,61 +711,7 @@ public class MainActivity extends AppCompatActivity
         guide.setNegativeButton(btn_no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ImageShow();
-            }
-        });
-
-        guide.create();
-        guide.show();
-    }
-
-
-    public void TimeUpPopup(){
-        AlertDialog.Builder guide = new AlertDialog.Builder(this);
-        TextView vmessage = new TextView(this);
-        int level = 0;
-        String pop_title = "";
-        String pop_message = "";
-        String btn_yes = "";
-        String btn_no = "";
-
-        //ユーザーレベル算出
-
-        if (_language.equals("ja")) {
-
-            pop_title += "連続再生を停止しました";
-            pop_message += "\n\n" +
-                    "継続する場合は「PLAY」を押して下さい" +
-                    "\n\n\n連続再生回数を増やす場合は「TIPS」を確認下さい" +
-                    "\n\n\n※現在の連続再生回数 : "+db_data1+"回"+"\n\n\n\n";
-
-            btn_yes += "確認";
-        }
-        else{
-            pop_title += "Continuous playback has stopped !!";
-            pop_message += "\n\n" +
-                    "Press [PLAY] to continue." +
-                    "\n\n\nPlease check [TIPS] to increase the continuous playback COUNT." +
-                    "\n\n\nCurrent COUNT  [ "+db_data1+" ]"+"\n\n\n\n";
-
-            btn_yes += "O K";
-        }
-
-        //メッセージ
-        vmessage.setText(pop_message);
-        vmessage.setBackgroundColor(Color.DKGRAY);
-        vmessage.setTextColor(Color.WHITE);
-        vmessage.setTextSize(17);
-
-        //タイトル
-        guide.setTitle(pop_title);
-        guide.setIcon(R.drawable.timeup);
-        guide.setView(vmessage);
-
-        guide.setPositiveButton(btn_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ImageShow();
+                screen_display();
             }
         });
 
@@ -940,11 +823,13 @@ public class MainActivity extends AppCompatActivity
             } finally {
                 db.close();
             }
+            /*
             if (ret == -1) {
                 Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
             }
+             */
 
         } else {
             db_user_lv = data;
@@ -965,7 +850,7 @@ public class MainActivity extends AppCompatActivity
             db_data8 = data8;
             db_data9 = data9;
             db_data10 = data10;
-            Toast.makeText(this, "Data Loading...  Access Level:" + db_user_lv, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Data Loading...  Access Level:" + db_user_lv, Toast.LENGTH_SHORT).show();
         }
     }
     /* DB更新 */
@@ -996,11 +881,13 @@ public class MainActivity extends AppCompatActivity
         } finally {
             db.close();
         }
+        /*
         if (ret == -1){
             Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Saving.... OK ", Toast.LENGTH_SHORT).show();
         }
+         */
     }
 
     @Override
@@ -1109,22 +996,9 @@ public class MainActivity extends AppCompatActivity
                             //ランダムタイムアップまで待つ;
                         }
                         else {
-                            playcount++;
-                            if (playcount <= db_data1) {
-                                countText.start();
-                                if (isRandomMode == true && isEmergencyMode == false) {
-                                    play_random_delay = (new Random().nextInt(15) + 8) * 1000;
-                                }
-                                ImageShow();
-                            } else {
-                                playcount = 0;
-                                soundStop(1);
-                                soundStop(2);
-                                soundStop(3);
-                                ImageShow();
-                                // タイムアップのダイアログ表示
-                                // TODO:
-                                TimeUpPopup();
+                            countText.start();
+                            if (isRandomMode == true && isEmergencyMode == false) {
+                                play_random_delay = (new Random().nextInt(15) + 8) * 1000;
                             }
                         }
                     }
@@ -1150,7 +1024,7 @@ public class MainActivity extends AppCompatActivity
                             pitch_zero = 0;
                             roll_minus = 0;
                             roll_plus = 0;
-                            emergency_Start();
+//                            emergency_Start();
                         }
                     }
                     else
@@ -1165,18 +1039,52 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * タイマータスク派生クラス
+     * run()に定周期で処理したい内容を記述
+     *
+     */
+    public class BlinkingTask extends TimerTask {
+        @Override
+        public void run() {
+            //ここに定周期で実行したい処理を記述します
+            bHandler.post( new Runnable() {
+                public void run() {
+                    light_on_exec();
+                    if (blinking){
+                        blinking = false;
+                    }
+                    else{
+                        blinking = true;
+                    }
+                }
+            });
+        }
+    }
+
     /*
      *   ライトＯＮ
      * */
-    public void light_ON() {
+    public void light_on_exec() {
         if(mCameraId == null){
             return;
         }
         try {
-            mCameraManager.setTorchMode(mCameraId, true);
+            mCameraManager.setTorchMode(mCameraId, blinking);
         } catch (CameraAccessException e) {
             //エラー処理
             e.printStackTrace();
+        }
+    }
+    public void light_ON(int type) {
+        if (type == 1){
+            blinking = true;
+            light_on_exec();
+        }
+        else if(type == 2){
+            this.blinkTimer = new Timer();
+            this.blinkTimerTask = new BlinkingTask();
+            this.blinkTimer.schedule(blinkTimerTask, 500, 500);
         }
     }
     /*
@@ -1187,7 +1095,6 @@ public class MainActivity extends AppCompatActivity
         pitch_zero = 0;
         roll_plus = 0;
         roll_minus = 0;
-        emergency_playing = false;
 
         if(mCameraId == null){
             return;
@@ -1572,7 +1479,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false){
-                    db_normal = position;
+                    if (isSelectSoundOk(position) == true) {
+                        db_normal = position;
+                    }
+                    else{
+                        SelectMissMessage();
+                    }
                 }
                 screen_display();
             }
@@ -1587,7 +1499,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false) {
-                    db_emergency = position;
+                    if (isSelectSoundOk(position) == true) {
+                        db_emergency = position;
+                    }
+                    else{
+                        SelectMissMessage();
+                    }
                 }
                 screen_display();
             }
@@ -1695,5 +1612,31 @@ public class MainActivity extends AppCompatActivity
         return INTERVAL_0;
     }
 
+    public boolean isSelectSoundOk(int s_data) {
+
+        if (s_data == 7 || s_data == 8){
+            if (db_data3 <= 0){
+                return false;
+            }
+        }
+        if (s_data == 9 || s_data == 10){
+            if (db_data3 <= 1){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void SelectMissMessage() {
+        // 注意
+        String mess = "";
+        if (_language.equals("ja")) {
+            mess = "【現在は選択できません】報酬動画を視聴すると選ぶことができます";
+        }
+        else{
+            mess = "[Currently unavailable] You can select it by watching the reward video.";
+        }
+        Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
+    }
 
 }
