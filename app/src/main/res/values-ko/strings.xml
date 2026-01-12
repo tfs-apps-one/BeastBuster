@@ -1,23 +1,23 @@
 <resources>
     <string name="app_name">Bear Bell</string>
-    <string name="action_settings">설정</string>
-    <string name="preference_title">설정 목록</string>
+    <string name="action_settings">Settings</string>
+    <string name="preference_title">Setting list</string>
 
-    <string name="play_delay_title">연속 재생 간격</string>
-    <string name="play_delay_summary">연속 재생 간격을 설정하십시오</string>
-    <string name="play_delay_dialog">연속 재생 시간 \n(다음 재생 될 때까지의 시간)</string>
+    <string name="play_delay_title">Continuous playback interval</string>
+    <string name="play_delay_summary">Please set the continuous playback interval</string>
+    <string name="play_delay_dialog">Continuous playback time</string>
 
     <string-array name="play_delay_entries_list">
-        <item> 0초 후</item>
-        <item> 1초 후</item>
-        <item> 3초 후</item>
-        <item> 5초 후</item>
-        <item> 7초 후</item>
-        <item>10초 후</item>
-        <item>15초 후</item>
-        <item>20초 후</item>
-        <item>30초 후</item>
-        <item>Random</item>
+        <item> 0 seconds later</item>
+        <item> 1 seconds later</item>
+        <item> 3 seconds later</item>
+        <item> 5 seconds later</item>
+        <item> 7 seconds later</item>
+        <item>10 seconds later</item>
+        <item>15 seconds later</item>
+        <item>20 seconds later</item>
+        <item>30 seconds later</item>
+        <item>Random later</item>
     </string-array>
     <string-array name="play_delay_entryvalues_list">
         <item>0</item>
@@ -32,12 +32,12 @@
         <item>99</item>
     </string-array>
 
-    <string name="play_volume_title">볼륨</string>
-    <string name="play_volume_summary">볼륨을 설정하십시오</string>
-    <string name="play_volume_dialog">음량 설정 (15 단계)</string>
+    <string name="play_volume_title">volume</string>
+    <string name="play_volume_summary">Please set the volume</string>
+    <string name="play_volume_dialog">Volume setting(15 levels)</string>
 
     <string-array name="play_volume_entries_list">
-        <item>1(최소)</item>
+        <item>1(min)</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
@@ -51,7 +51,7 @@
         <item>12</item>
         <item>13</item>
         <item>14</item>
-        <item>15(최대)</item>
+        <item>15(max)</item>
     </string-array>
     <string-array name="play_volume_entryvalues_list">
         <item>1</item>
@@ -71,15 +71,15 @@
         <item>15</item>
     </string-array>
 
-    <string name="emergency_title">긴급 재생음</string>
-    <string name="emergency_summary">긴급 재생음을 선택하십시오. \n휴대폰을 좌우로 50도 흔들어 재생합니다</string>
-    <string name="emergency_dialog">긴급 재생음 선택</string>
+    <string name="emergency_title">Emergency reproduction sound</string>
+    <string name="emergency_summary">Please select emergency sound reproduction\nShake your phone 50 degrees to the left and right to play</string>
+    <string name="emergency_dialog">Emergency playback sound selection</string>
 
     <string-array name="emergency_entries_list">
-        <item>없음</item>
-        <item>방울</item>
-        <item>총성</item>
-        <item>천둥</item>
+        <item>none</item>
+        <item>bell</item>
+        <item>gunshot</item>
+        <item>thunder</item>
     </string-array>
     <string-array name="emergency_entryvalues_list">
         <item>none</item>
@@ -88,14 +88,14 @@
         <item>thunder</item>
     </string-array>
 
-    <string name="bell_kind_title">방울</string>
-    <string name="bell_kind_summary">딸랑 딸랑 소리 종류를 선택하세요</string>
-    <string name="bell_kind_dialog">방울</string>
+    <string name="bell_kind_title">bell</string>
+    <string name="bell_kind_summary">Please select bell type</string>
+    <string name="bell_kind_dialog">bell</string>
 
     <string-array name="bell_kind_entries_list">
-        <item>방울1</item>
-        <item>방울2</item>
-        <item>방울3</item>
+        <item>bell 1</item>
+        <item>bell 2</item>
+        <item>bell 3</item>
     </string-array>
     <string-array name="bell_kind_entryvalues_list">
         <item>1</item>
@@ -103,17 +103,18 @@
         <item>3</item>
     </string-array>
 
-    <string name="gun_kind_title">총성・폭죽・불꽃・늑대</string>
-    <string name="gun_kind_summary">종류를 선택하십시오\n「폭죽」「불꽃」「늑대」는 동영상 열람에 의해 사용할 수 있습니다</string>
-    <string name="gun_kind_dialog">총성・폭죽・불꽃・늑대</string>
+    <string name="gun_kind_title">gunshot or explosion</string>
+    <string name="gun_kind_summary">Please select type\nFirecrackers and fireworks and wolf will be activated by viewing the reward video.</string>
+    <string name="gun_kind_dialog">gunshot or explosion</string>
 
     <string-array name="gun_kind_entries_list">
-        <item>총성1</item>
-        <item>총성2</item>
-        <item>총성3</item>
-        <item>폭죽</item>
-        <item>불꽃</item>
-        <item>늑대</item>
+        <item>gunshot 1</item>
+        <item>gunshot 2</item>
+        <item>gunshot 3</item>
+        <item>firecrackers</item>
+        <item>firework</item>
+        <item>wolf</item>
+
     </string-array>
     <string-array name="gun_kind_entryvalues_list">
         <item>1</item>
@@ -124,14 +125,14 @@
         <item>6</item>
     </string-array>
 
-    <string name="thunder_kind_title">천둥</string>
-    <string name="thunder_kind_summary">천둥 종류를 선택하세요</string>
-    <string name="thunder_kind_dialog">천둥</string>
+    <string name="thunder_kind_title">thunder</string>
+    <string name="thunder_kind_summary">Please select thunder type</string>
+    <string name="thunder_kind_dialog">thunder</string>
 
     <string-array name="thunder_kind_entries_list">
-        <item>천둥1</item>
-        <item>천둥2</item>
-        <item>천둥3</item>
+        <item>thunder 1</item>
+        <item>thunder 2</item>
+        <item>thunder 3</item>
     </string-array>
     <string-array name="thunder_kind_entryvalues_list">
         <item>1</item>
@@ -139,21 +140,24 @@
         <item>3</item>
     </string-array>
 
-    <string name="volumeback_title">볼륨 복원 기능</string>
-    <string name="volumeback_summary">응용 프로그램 종료시 원래 볼륨으로 복원</string>
+    <string name="volumeback_title">Volume return function</string>
+    <string name="volumeback_summary">Restore the original volume at the end of the application</string>
 
-    <string name="screen_type_title">화면 유형</string>
-    <string name="screen_type_summary">화면 유형을 선택하세요</string>
-    <string name="screen_type_dialog">화면 유형</string>
+    <string name="screen_type_title">Screen type</string>
+    <string name="screen_type_summary">Please select Screen type</string>
+    <string name="screen_type_dialog">Screen type</string>
 
     <string-array name="screen_type_entries_list">
-        <item>기본</item>
-        <item>단순 그레이</item>
+        <item>Default</item>
+        <item>Simple gray</item>
     </string-array>
     <string-array name="screen_type_entryvalues_list">
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string name="sos_volume_title">SOS Volume Maximum</string>
+    <string name="sos_volume_summary">Sets the SOS volume to maximum (regardless of the volume bar setting)</string>
 
     <string-array name="list_sound1">
         <item>Normal Sound</item>
@@ -201,5 +205,7 @@
         <item>Interval:30s</item>
         <item>Random</item>
     </string-array>
+
+    <string name="screen_lock">Screen is locked\n(press and hold to unlock)</string>
 
 </resources>

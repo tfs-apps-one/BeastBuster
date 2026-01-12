@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.PowerManager;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -84,6 +85,9 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.ToggleButton;
 
+//TODO:Lock画面
+import androidx.constraintlayout.widget.ConstraintLayout;
+import android.view.WindowManager;
 
 //public class MainActivity extends AppCompatActivity {
 /*public class MainActivity extends AppCompatActivity
@@ -124,6 +128,8 @@ public class MainActivity extends AppCompatActivity
     private String emergency_kind = "";
     private boolean isEmergencyMode = false;
     private boolean volume_back = false;
+    private boolean sos_volume_max = false;
+
     //ライト関連
     private boolean blinking = false;
     private CameraManager mCameraManager;
@@ -203,7 +209,8 @@ public class MainActivity extends AppCompatActivity
     private static final String AD_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
 
     private int SOUND_USED_MAX = 12;
-
+    //TODO:lock画面
+    private ConstraintLayout lockOverlay;
 
     private int set_interval;
     private Spinner sp_sound1;      //通常音選択
@@ -226,14 +233,14 @@ public class MainActivity extends AppCompatActivity
     final private int INTERVAL_30 = 30000;
     final private int INTERVAL_RANDUM = -1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
-        //TODO:ダークモード禁止処理
 
         //  国設定
         _local = Locale.getDefault();
@@ -271,6 +278,17 @@ public class MainActivity extends AppCompatActivity
         toggleSelect();
         seekSelect();
         spinnerSelect();
+
+        //TODO:lock画面
+        lockOverlay = findViewById(R.id.lockOverlay);
+        // 長押しでロック解除する設定
+        lockOverlay.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                unlockMode();
+                return true;
+            }
+        });
     }
 
     /************************************************************
@@ -398,7 +416,7 @@ public class MainActivity extends AppCompatActivity
 
         //ユーザーレベルアップ
         if (_language.equals("ja")) {
-            Toast.makeText(this, "連続回数UP!：" + (tmp_data) + "  → " + (db_data3), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "視聴回数UP!：" + (tmp_data) + "  → " + (db_data3), Toast.LENGTH_SHORT).show();
         }
         else{
             Toast.makeText(this, "COUNT UP!：" + (tmp_data) + "  → " + (db_data3), Toast.LENGTH_SHORT).show();
@@ -418,9 +436,10 @@ public class MainActivity extends AppCompatActivity
         }
 
 
+        // TODO: 設定処理の見直し
         //  設定関連読み込み
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-//        SharedPreferences sharedPreferences = getSharedPreferences("DataStore", MODE_PRIVATE);
+        /*
         //音量
         String str1 = sharedPreferences.getString("play_volume", "2");
         sound_volume = Integer.parseInt(str1);
@@ -453,6 +472,8 @@ public class MainActivity extends AppCompatActivity
         //画面タイプ
         String str6 = sharedPreferences.getString("screen_type", "1");
         screen_type = Integer.parseInt(str6);
+        */
+        sos_volume_max = sharedPreferences.getBoolean("sos_volume_max", false);
 
         //センサ監視起動
         this.emerTimer = new Timer();
@@ -579,9 +600,15 @@ public class MainActivity extends AppCompatActivity
         //音量調整
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
        // 音量を設定する
-        int tmp_volume = db_volume1;
+        int tmp_volume = 0;
+        if (type == 3 && sos_volume_max == true){
+            tmp_volume = 15;
+        }
+        else{
+            tmp_volume = db_volume1;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            tmp_volume = db_volume1 * 2;  //30段階になったため
+            tmp_volume = tmp_volume * 2;  //30段階になったため
         }
         am.setStreamVolume(AudioManager.STREAM_MUSIC, tmp_volume, 0);
 
@@ -655,29 +682,25 @@ public class MainActivity extends AppCompatActivity
         String btn_no = "";
 
         //ユーザーレベル算出
-
         if (_language.equals("ja")) {
 
-            pop_message += "\n\n広告動画を視聴して報酬を得ますか？\n「連続再生」の回数がＵＰします。" +
-                    "\n初期値450回は「鈴音」30分間の\n連続再生に相当します。" +
-                    "\n\n\n1回視聴：1800回に増加( 2h 相当)" +
-                    "\n2回視聴：4500回に増加( 5h 相当)"+
-                    "\n3回視聴：9000回に増加(10h 相当)"+
-                    "\n4回以上は「爆竹／花火／狼」の再生有効\n連続回数を450回ずつ増加。"+
-                    "\n\n\n※現在の連続再生回数 : "+db_data1+"回"+"\n \n\n\n";
+            pop_message += "\n\n広告動画を視聴して[報酬]を得ますか？" +
+                    "\n [報酬]は再生音が追加されます"+
+                    "\n\n\n 1回視聴 [爆竹／花火]" +
+                    "\n 2回視聴 [狼遠吠え／ﾍﾟｯﾄﾎﾞﾄﾙ]"+
+                    "\n 3回視聴以上は何も変わりません"+
+                    "\n\n\n 現在の視聴回数 : "+db_data3+"回"+"\n\n\n\n";
 
             btn_yes += "視聴";
             btn_no += "中止";
         }
         else{
-            pop_message += "\n\n \n" +
-                    "Do you want to watch the video and increase the continuous playback COUNT ?" +
-                    "\n\n\nPlay the bell for 30 minutes with [ COUNT 450 ]" +
-                    "\n\n\nWatch once     [ COUNT 1800 ]" +
-                    "\nWatch twice    [ COUNT 4500 ]"+
-                    "\nWatch 3 times [ COUNT 9000 ]"+
-                    "\n4 times or more will increase by [ COUNT 450 ] and Firecrackers and fireworks playback enabled."+
-                    "\n\n\nCurrent COUNT  [ "+db_data1+" ]"+"\n\n\n\n";
+            pop_message += "\n\nWould you like to watch an ad video and receive [reward]?" +
+                    "\n [Reward] will include an additional sound." +
+                    "\n\n\n 1 view [Firecrackers/Fireworks]" +
+                    "\n 2 views [Wolf Howl/Bottle]"+
+                    "\n No change after 3 views"+
+                    "\n\n\n Current number of views [ "+db_data3+" ]"+"\n\n\n\n";
 
             btn_yes += "YES";
             btn_no += "N O";
@@ -699,13 +722,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RdShow();
-                /*
-                if (mRewardedVideoAd.isLoaded()) {
-                    mRewardedVideoAd.show();
-                }
-                 */
-                //test_make
-//                    db_data1++;
             }
         });
         guide.setNegativeButton(btn_no, new DialogInterface.OnClickListener() {
@@ -1157,13 +1173,13 @@ public class MainActivity extends AppCompatActivity
             mCameraManager = null;
         }
 
-        /* 音量の戻しの処理 */
+        /* 音量の戻しの処理
         if (volume_back == true) {
-//      if (volume_back == true && db_user_lv >= 5) {
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             am.setStreamVolume(AudioManager.STREAM_MUSIC, now_volume, 0);
             am = null;
         }
+         */
 
         //  DB更新
         AppDBUpdated();
@@ -1175,6 +1191,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
+            //TODO:lock画面
+            // ロック表示中の時は、戻るボタンを完全に無効化
+            if (lockOverlay != null && lockOverlay.getVisibility() == View.VISIBLE) {
+                return true;
+            }
             // 戻るボタンの処理
             // ダイアログ表示など特定の処理を行いたい場合はここに記述
             // 親クラスのdispatchKeyEvent()を呼び出さずにtrueを返す
@@ -1378,10 +1399,10 @@ public class MainActivity extends AppCompatActivity
         }
         else{
             if (_language.equals("ja")) {
-                v.setText("＊＊注意＊＊ アプリを閉じても\n再生は継続します。停止する場合は\n「STOP」をタップして下さい");
+                v.setText("＊＊注意＊＊ 連続再生を継続する場合\n画面ロック(右下の鍵ｱｲｺﾝ)を推奨します\n停止する場合は「STOP」をタップして下さい");
             }
             else{
-                v.setText("**NOTICE**\nPlayback stays active after closing.\nTap [STOP] to turn it off.");
+                v.setText("**NOTICE**\nIf you want to continue playing continuously, we recommend you lock your screen (lock icon). To stop playback, tap [STOP]");
             }
             v.setTextColor(Color.parseColor("red"));
         }
@@ -1637,6 +1658,44 @@ public class MainActivity extends AppCompatActivity
             mess = "[Currently unavailable] You can select it by watching the reward video.";
         }
         Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
+    }
+
+    //TODO:lock画面
+    // ロック開始（ボタンなどから呼び出す用）
+    public void startLockMode(View view) {
+        // 1. 画面を常時点灯に固定
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // 2. 画面の輝度を最小にする（節電）
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.screenBrightness = 0.03f; // 0.01がほぼ真っ暗
+        getWindow().setAttributes(lp);
+
+        // 3. ロック用レイアウトを表示
+        lockOverlay.setVisibility(View.VISIBLE);
+
+        String mess = "";
+        if (_language.equals("ja")) {
+            mess = "画面を【ロック】しました";
+        }
+        else{
+            mess = "The screen has been locked";
+        }
+        Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
+    }
+
+    // ロック解除
+    public void unlockMode() {
+        // 1. 常時点灯フラグを解除（システムのタイムアウト設定に戻る）
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // 2. 輝度を元に戻す
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        getWindow().setAttributes(lp);
+
+        // 3. ロック用レイアウトを隠す
+        lockOverlay.setVisibility(View.GONE);
     }
 
 }

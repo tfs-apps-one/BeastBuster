@@ -1,23 +1,23 @@
 <resources>
     <string name="app_name">Bear Bell</string>
-    <string name="action_settings">环境</string>
-    <string name="preference_title">集列表</string>
+    <string name="action_settings">Settings</string>
+    <string name="preference_title">Setting list</string>
 
-    <string name="play_delay_title">连续播放时间</string>
-    <string name="play_delay_summary">设置连续播放间隔</string>
-    <string name="play_delay_dialog">连续播放时间\n（下一步时间玩）</string>
+    <string name="play_delay_title">Continuous playback interval</string>
+    <string name="play_delay_summary">Please set the continuous playback interval</string>
+    <string name="play_delay_dialog">Continuous playback time</string>
 
     <string-array name="play_delay_entries_list">
-        <item> 0秒后</item>
-        <item> 1秒后</item>
-        <item> 3秒后</item>
-        <item> 5秒后</item>
-        <item> 7秒后</item>
-        <item>10秒后</item>
-        <item>15秒后</item>
-        <item>20秒后</item>
-        <item>30秒后</item>
-        <item>Random</item>
+        <item> 0 seconds later</item>
+        <item> 1 seconds later</item>
+        <item> 3 seconds later</item>
+        <item> 5 seconds later</item>
+        <item> 7 seconds later</item>
+        <item>10 seconds later</item>
+        <item>15 seconds later</item>
+        <item>20 seconds later</item>
+        <item>30 seconds later</item>
+        <item>Random later</item>
     </string-array>
     <string-array name="play_delay_entryvalues_list">
         <item>0</item>
@@ -32,12 +32,12 @@
         <item>99</item>
     </string-array>
 
-    <string name="play_volume_title">音量</string>
-    <string name="play_volume_summary">设置音量</string>
-    <string name="play_volume_dialog">音量设置（15级）</string>
+    <string name="play_volume_title">volume</string>
+    <string name="play_volume_summary">Please set the volume</string>
+    <string name="play_volume_dialog">Volume setting(15 levels)</string>
 
     <string-array name="play_volume_entries_list">
-        <item>1(最低限度)</item>
+        <item>1(min)</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
@@ -51,7 +51,7 @@
         <item>12</item>
         <item>13</item>
         <item>14</item>
-        <item>15(最大)</item>
+        <item>15(max)</item>
     </string-array>
     <string-array name="play_volume_entryvalues_list">
         <item>1</item>
@@ -71,15 +71,15 @@
         <item>15</item>
     </string-array>
 
-    <string name="emergency_title">紧急再现声音</string>
-    <string name="emergency_summary">打抖50度左右的紧急再现声音请选择移动</string>
-    <string name="emergency_dialog">选择紧急再现声音</string>
+    <string name="emergency_title">Emergency reproduction sound</string>
+    <string name="emergency_summary">Please select emergency sound reproduction\nShake your phone 50 degrees to the left and right to play</string>
+    <string name="emergency_dialog">Emergency playback sound selection</string>
 
     <string-array name="emergency_entries_list">
-        <item>无</item>
-        <item>钟</item>
-        <item>枪弹</item>
-        <item>霹雳</item>
+        <item>none</item>
+        <item>bell</item>
+        <item>gunshot</item>
+        <item>thunder</item>
     </string-array>
     <string-array name="emergency_entryvalues_list">
         <item>none</item>
@@ -88,14 +88,14 @@
         <item>thunder</item>
     </string-array>
 
-    <string name="bell_kind_title">钟</string>
-    <string name="bell_kind_summary">选择那种声音钟声</string>
-    <string name="bell_kind_dialog">钟</string>
+    <string name="bell_kind_title">bell</string>
+    <string name="bell_kind_summary">Please select bell type</string>
+    <string name="bell_kind_dialog">bell</string>
 
     <string-array name="bell_kind_entries_list">
-        <item>钟1</item>
-        <item>钟2</item>
-        <item>钟3</item>
+        <item>bell 1</item>
+        <item>bell 2</item>
+        <item>bell 3</item>
     </string-array>
     <string-array name="bell_kind_entryvalues_list">
         <item>1</item>
@@ -103,17 +103,18 @@
         <item>3</item>
     </string-array>
 
-    <string name="gun_kind_title">枪弹・鞭炮・焰火・狼</string>
-    <string name="gun_kind_summary">請揀一個類型\n睇片就可以用到「爆竹」「煙花」「狼」</string>
-    <string name="gun_kind_dialog">枪弹・鞭炮・焰火・狼</string>
+    <string name="gun_kind_title">gunshot or explosion</string>
+    <string name="gun_kind_summary">Please select type\nFirecrackers and fireworks and wolf will be activated by viewing the reward video.</string>
+    <string name="gun_kind_dialog">gunshot or explosion</string>
 
     <string-array name="gun_kind_entries_list">
-        <item>枪弹1</item>
-        <item>枪弹2</item>
-        <item>枪弹3</item>
-        <item>鞭炮</item>
-        <item>焰火</item>
-        <item>狼</item>
+        <item>gunshot 1</item>
+        <item>gunshot 2</item>
+        <item>gunshot 3</item>
+        <item>firecrackers</item>
+        <item>firework</item>
+        <item>wolf</item>
+
     </string-array>
     <string-array name="gun_kind_entryvalues_list">
         <item>1</item>
@@ -124,14 +125,14 @@
         <item>6</item>
     </string-array>
 
-    <string name="thunder_kind_title">霹雳</string>
-    <string name="thunder_kind_summary">选择雷霆类型</string>
-    <string name="thunder_kind_dialog">霹雳</string>
+    <string name="thunder_kind_title">thunder</string>
+    <string name="thunder_kind_summary">Please select thunder type</string>
+    <string name="thunder_kind_dialog">thunder</string>
 
     <string-array name="thunder_kind_entries_list">
-        <item>霹雳1</item>
-        <item>霹雳2</item>
-        <item>霹雳3</item>
+        <item>thunder 1</item>
+        <item>thunder 2</item>
+        <item>thunder 3</item>
     </string-array>
     <string-array name="thunder_kind_entryvalues_list">
         <item>1</item>
@@ -139,21 +140,24 @@
         <item>3</item>
     </string-array>
 
-    <string name="volumeback_title">音量返回功能</string>
-    <string name="volumeback_summary">在应用程序结束时恢复原始音量</string>
+    <string name="volumeback_title">Volume return function</string>
+    <string name="volumeback_summary">Restore the original volume at the end of the application</string>
 
-    <string name="screen_type_title">屏幕类型</string>
-    <string name="screen_type_summary">请选择屏幕类型</string>
-    <string name="screen_type_dialog">屏幕类型</string>
+    <string name="screen_type_title">Screen type</string>
+    <string name="screen_type_summary">Please select Screen type</string>
+    <string name="screen_type_dialog">Screen type</string>
 
     <string-array name="screen_type_entries_list">
-        <item>默认</item>
-        <item>简单的灰色</item>
+        <item>Default</item>
+        <item>Simple gray</item>
     </string-array>
     <string-array name="screen_type_entryvalues_list">
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string name="sos_volume_title">SOS Volume Maximum</string>
+    <string name="sos_volume_summary">Sets the SOS volume to maximum (regardless of the volume bar setting)</string>
 
     <string-array name="list_sound1">
         <item>Normal Sound</item>
@@ -201,5 +205,7 @@
         <item>Interval:30s</item>
         <item>Random</item>
     </string-array>
+
+    <string name="screen_lock">Screen is locked\n(press and hold to unlock)</string>
 
 </resources>

@@ -163,6 +163,9 @@
         <item>2</item>
     </string-array>
 
+    <string name="sos_volume_title">SOS Volume Maximum</string>
+    <string name="sos_volume_summary">Sets the SOS volume to maximum (regardless of the volume bar setting)</string>
+
     <string-array name="list_sound1">
         <item>Normal Sound</item>
         <item>BELL 1</item>
@@ -210,5 +213,6 @@
         <item>Random</item>
     </string-array>
 
+    <string name="screen_lock">Screen is locked\n(press and hold to unlock)</string>
 
 </resources>

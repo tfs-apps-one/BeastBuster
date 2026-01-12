@@ -155,6 +155,9 @@
         <item>2</item>
     </string-array>
 
+    <string name="sos_volume_title">SOS音量最大</string>
+    <string name="sos_volume_summary">SOS音量を最大にします（音量バーの設定に関係なく最大音量にします）</string>
+
     <string-array name="list_sound1">
         <item>通常音:---</item>
         <item>鈴音1</item>
@@ -201,5 +204,7 @@
         <item>間隔:30秒</item>
         <item>間隔:ﾗﾝﾀﾞﾑ</item>
     </string-array>
+
+    <string name="screen_lock">画面ロック中\n（長押しで解除）</string>
 
 </resources>
