@@ -192,11 +192,11 @@ public class MainActivity extends AppCompatActivity
 
     // テストID 動画リワード
 //TODO:test_make ※※本物を使うこと！！
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+//    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
     // 本物
-//    private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
+    private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
     // 本物
     //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
 
@@ -204,9 +204,9 @@ public class MainActivity extends AppCompatActivity
     //インタースティシャル広告
     private InterstitialAd mInterstitialAd;
     //本番ID
-//    private static final String AD_INTER_UNIT_ID = "ca-app-pub-4924620089567925/3067846578"; // 実際のIDに変更
+    private static final String AD_INTER_UNIT_ID = "ca-app-pub-4924620089567925/3067846578"; // 実際のIDに変更
     //テストID
-    private static final String AD_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+//    private static final String AD_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
 
     private int SOUND_USED_MAX = 12;
     //TODO:lock画面
@@ -262,12 +262,13 @@ public class MainActivity extends AppCompatActivity
             }
         }, new Handler());
 
-        //広告
+        //広告 TODO:画面キャプチャ用に広告を削除
         MobileAds.initialize(this, initializationStatus -> {
             mAdview = findViewById(R.id.adView);
             AdRequest adRequest = new AdRequest.Builder().build();
             mAdview.loadAd(adRequest);
         });
+
 
         //動画リワード
         loadRewardedAd();
@@ -337,12 +338,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
     private void fullAdDisplay() {
-        if (db_data2 > SOUND_USED_MAX) {
+        int max_num = SOUND_USED_MAX;
+        int max_plus = db_data3;
+        if (max_plus >= 3) {
+            max_plus = max_plus / 3;
+        }
+        else{
+            max_plus = 0;
+        }
+        max_num = max_num + max_plus;
+        if (db_data2 > max_num) {
             db_data2 = 0;
         }
         db_data2--;
         if (db_data2 < 0) {
-            db_data2 = SOUND_USED_MAX;
+            db_data2 = max_num;
         }
         if (db_data2 == 1) {
             //全面広告表示
@@ -408,9 +418,6 @@ public class MainActivity extends AppCompatActivity
         int tmp_data = db_data3;
         // 再生回数のセット
         db_data3 += 1;   //爆竹と花火を有効
-        if (db_data3 > 2){
-            db_data3 = 2;
-        }
         // 動画視聴の日付
         //db_data2 = getNowDate();
 
@@ -434,7 +441,6 @@ public class MainActivity extends AppCompatActivity
         if (sensorManager == null) {
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
-
 
         // TODO: 設定処理の見直し
         //  設定関連読み込み
@@ -486,6 +492,9 @@ public class MainActivity extends AppCompatActivity
         helper = new MyOpenHelper(this);
         AppDBInitRoad();
         screen_display();
+
+        //TODO:test_make
+        //db_data3 = 6;
 
         //評価ポップアップ処理
         if (db_data4 <= REVIEW_POP){
@@ -668,10 +677,12 @@ public class MainActivity extends AppCompatActivity
         }
         // 全て停止中
         else{
-            PresentPopup();
+            showStylishPopup();
+            //PresentPopup();
         }
     }
 
+    /*
     // プレゼント処理
     public void PresentPopup(){
         AlertDialog.Builder guide = new AlertDialog.Builder(this);
@@ -733,7 +744,7 @@ public class MainActivity extends AppCompatActivity
 
         guide.create();
         guide.show();
-    }
+    }*/
 
     /**
      *  DB（データベース）関連の処理
@@ -1698,4 +1709,88 @@ public class MainActivity extends AppCompatActivity
         lockOverlay.setVisibility(View.GONE);
     }
 
+    //TODO:ダイアログ
+    /*
+    public void showStylishPopup(String title,
+                                 String message,
+                                 String okText,
+                                 String cancelText,
+                                 final Runnable onConfirm) {
+
+     */
+    public void showStylishPopup(){
+        String str_message = "";
+        String str_title = "";
+        String str_btn_yes = "";
+        String str_btn_no = "";
+
+        // レイアウトのインフレート
+        View dialogView = getLayoutInflater().inflate(R.layout.popup, null);
+
+        TextView popup_title = dialogView.findViewById(R.id.popup_title);
+        TextView popup_message = dialogView.findViewById(R.id.popup_message);
+        Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btn_ok = dialogView.findViewById(R.id.btn_ok);
+
+        //ユーザーレベル算出
+        if (_language.equals("ja")) {
+            str_title += "追加オプション";
+            str_message += "\n\n広告動画を視聴して[報酬]を得ますか？" +
+                    "\n [報酬]は以下になります"+
+                    "\n\n\n 1回視聴 [爆竹／花火]" +
+                    "\n 2回視聴 [狼遠吠え／ﾍﾟｯﾄﾎﾞﾄﾙ]"+
+                    "\n 3回視聴 [全面広告表示が微減]"+
+                    "\n\n\n 現在の視聴回数 : "+db_data3+"回"+"\n\n\n\n";
+
+            str_btn_yes += "視聴";
+            str_btn_no += "中止";
+        }
+        else{
+            str_title += "Additional options";
+            str_message += "\n\nWould you like to watch an ad video and receive [reward]?" +
+                    "\n [Reward] Please check the following" +
+                    "\n\n\n 1 view [Firecrackers/Fireworks]" +
+                    "\n 2 views [Wolf Howl/Bottle]"+
+                    "\n 3 views [decrease in full-page ads]"+
+                    "\n\n\n Current number of views [ "+db_data3+" ]"+"\n\n\n\n";
+
+            str_btn_yes += "YES";
+            str_btn_no += "N O";
+        }
+
+        popup_title.setText(str_title);
+        popup_message.setText(str_message);
+        btn_cancel.setText(str_btn_no);
+        btn_ok.setText(str_btn_yes);
+
+        // ダイアログの構築
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        final AlertDialog alertDialog = builder.create();
+
+        // 背景を透明にする（これがないと角丸の外側に四角い白枠が出てしまいます）
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // ボタンの処理
+        dialogView.findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // OK時の処理
+                alertDialog.dismiss();
+                RdShow();
+            }
+        });
+
+        dialogView.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                screen_display();
+            }
+        });
+
+        alertDialog.show();
+    }
 }
