@@ -35,6 +35,7 @@ import android.os.PowerManager;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.MotionEvent;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -282,11 +283,27 @@ public class MainActivity extends AppCompatActivity
 
         //TODO:lock画面
         lockOverlay = findViewById(R.id.lockOverlay);
-        // 長押しでロック解除する設定
-        lockOverlay.setOnLongClickListener(new View.OnLongClickListener() {
+        // 長押しでロック解除する設定 (3秒)
+        lockOverlay.setOnTouchListener(new View.OnTouchListener() {
+            private final Handler handler = new Handler();
+            private final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    unlockMode();
+                }
+            };
+
             @Override
-            public boolean onLongClick(View v) {
-                unlockMode();
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        handler.postDelayed(runnable, 2500); // 3 seconds
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        handler.removeCallbacks(runnable);
+                        break;
+                }
                 return true;
             }
         });

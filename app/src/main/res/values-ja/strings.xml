@@ -205,6 +205,6 @@
         <item>間隔:ﾗﾝﾀﾞﾑ</item>
     </string-array>
 
-    <string name="screen_lock">画面ロック中\n（長押しで解除）</string>
+    <string name="screen_lock">画面ロック中\n（３秒長押しで解除）</string>
 
 </resources>

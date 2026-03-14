@@ -206,6 +206,6 @@
         <item>Random</item>
     </string-array>
 
-    <string name="screen_lock">Screen is locked\n(press and hold to unlock)</string>
+    <string name="screen_lock">Screen is locked\n(Press and hold for 3s to unlock)</string>
 
 </resources>
