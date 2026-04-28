@@ -14,6 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import java.util.Random;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -32,6 +34,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.PowerManager;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -99,25 +102,25 @@ public class MainActivity extends AppCompatActivity
     private MediaPlayer bgm;
     private int now_volume;
     private boolean isplaying = false;
-    private MediaPlayer countText;			//テキストビュー
+    private MediaPlayer countText; // テキストビュー
 
-    private Timer mainTimer1;					//タイマー用
-    private MainTimerTask mainTimerTask1;		//タイマタスククラス
-    private Timer mainTimer2;					//タイマー用
-    private MainTimerTask mainTimerTask2;		//タイマタスククラス
-    private Timer mainTimer3;					//タイマー用
-    private MainTimerTask mainTimerTask3;		//タイマタスククラス
-    private Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
+    private Timer mainTimer1; // タイマー用
+    private MainTimerTask mainTimerTask1; // タイマタスククラス
+    private Timer mainTimer2; // タイマー用
+    private MainTimerTask mainTimerTask2; // タイマタスククラス
+    private Timer mainTimer3; // タイマー用
+    private MainTimerTask mainTimerTask3; // タイマタスククラス
+    private Handler mHandler = new Handler(); // UI Threadへのpost用ハンドラ
 
-    //    static MySensor mySensor = null;         //テキストビュー
-    private Timer emerTimer;					//タイマー用
-    private EmerTimerTask emerTimerTask;		//タイマタスククラス
-    private Handler eHandler = new Handler();   //UI Threadへのpost用ハンドラ
-    private Timer blinkTimer;					//タイマー用
-    private BlinkingTask blinkTimerTask;		//タイマタスククラス
-    private Handler bHandler = new Handler();   //UI Threadへのpost用ハンドラ
+    // static MySensor mySensor = null; //テキストビュー
+    private Timer emerTimer; // タイマー用
+    private EmerTimerTask emerTimerTask; // タイマタスククラス
+    private Handler eHandler = new Handler(); // UI Threadへのpost用ハンドラ
+    private Timer blinkTimer; // タイマー用
+    private BlinkingTask blinkTimerTask; // タイマタスククラス
+    private Handler bHandler = new Handler(); // UI Threadへのpost用ハンドラ
 
-    //設定関連
+    // 設定関連
     private int sound_volume = 0;
     private int bell_kind = 0;
     private int gun_kind = 0;
@@ -131,12 +134,12 @@ public class MainActivity extends AppCompatActivity
     private boolean volume_back = false;
     private boolean sos_volume_max = false;
 
-    //ライト関連
+    // ライト関連
     private boolean blinking = false;
     private CameraManager mCameraManager;
     private String mCameraId = null;
     private boolean isOn = false;
-    protected final static double RAD2DEG = 180/Math.PI;
+    protected final static double RAD2DEG = 180 / Math.PI;
     SensorManager sensorManager;
     float[] rotationMatrix = new float[9];
     float[] gravity = new float[3];
@@ -147,17 +150,17 @@ public class MainActivity extends AppCompatActivity
     private int roll_minus = 0;
     private int pitch_zero = 0;
     private int sec_five = 0;
-    //  国設定
+    // 国設定
     private Locale _local;
     private String _language;
     private String _country;
     // DB
     public MyOpenHelper helper;
-    private int db_user_lv = 0; //ユーザーレベル
-    private int db_data1 = 0;   //再生回数
-    private int db_data2 = 0;   //未使用　リワード視聴日付
-    private int db_data3 = 0;   //オプション音（爆竹音）
-    private int db_data4 = 0;   //評価ポップアップ
+    private int db_user_lv = 0; // ユーザーレベル
+    private int db_data1 = 0; // 再生回数
+    private int db_data2 = 0; // 未使用 リワード視聴日付
+    private int db_data3 = 0; // オプション音（爆竹音）
+    private int db_data4 = 0; // 評価ポップアップ
     private int db_data5 = 0;
     private int db_normal = 0;
     private int db_emergency = 0;
@@ -172,56 +175,62 @@ public class MainActivity extends AppCompatActivity
     private int db_data9 = 0;
     private int db_data10 = 0;
 
-//TODO:test_make
-    final int PLAY_INIT_COUNT = 450;    //30分程度
-//    final int PLAY_INIT_COUNT = 5;      //30分程度
-    final int PLAY_1800 = 1800;         //2H
-    final int PLAY_4500 = 4500;         //5H
-    final int PLAY_9000 = 9000;         //10H
-    final int PLAY_PLUS = 450;          //30分加算
-    private int playcount = 0;  //繰り返し再生回数
+    // TODO:test_make
+    final int PLAY_INIT_COUNT = 450; // 30分程度
+    // final int PLAY_INIT_COUNT = 5; //30分程度
+    final int PLAY_1800 = 1800; // 2H
+    final int PLAY_4500 = 4500; // 5H
+    final int PLAY_9000 = 9000; // 10H
+    final int PLAY_PLUS = 450; // 30分加算
+    private int playcount = 0; // 繰り返し再生回数
 
     // 広告
     private AdView mAdview;
+    private int bannerRetryCount = 0;
+    private static final int BANNER_MAX_RETRY = 3;
     // リワード広告
     public RewardedAd rewardedAd;
 
-    //評価ポップアップ
+    // 評価ポップアップ
     private int ReviewCount = 1;
- //TODO:test_make
-    private int REVIEW_POP = 7; //評価ポップアップ
+    // TODO:test_make
+    private int REVIEW_POP = 7; // 評価ポップアップ
 
     // テストID 動画リワード
-//TODO:test_make ※※本物を使うこと！！
-//    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+    // TODO:test_make ※※本物を使うこと！！
+    // private static final String AD_UNIT_ID =
+    // "ca-app-pub-3940256099942544/5224354917";
     // テストID(APPは本物でOK)
-    //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
+    // private static final String APP_ID =
+    // "ca-app-pub-4924620089567925~2701724509";
     // 本物
     private static final String AD_UNIT_ID = "ca-app-pub-4924620089567925/8788880266";
     // 本物
-    //private static final String APP_ID = "ca-app-pub-4924620089567925~2701724509";
+    // private static final String APP_ID =
+    // "ca-app-pub-4924620089567925~2701724509";
 
-//TODO:test_make ※※本番を使うこと！！
-    //インタースティシャル広告
+    // TODO:test_make ※※本番を使うこと！！
+    // インタースティシャル広告
     private InterstitialAd mInterstitialAd;
-    //本番ID
+    // 本番ID
     private static final String AD_INTER_UNIT_ID = "ca-app-pub-4924620089567925/3067846578"; // 実際のIDに変更
-    //テストID
-//    private static final String AD_INTER_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+    // テストID
+    // private static final String AD_INTER_UNIT_ID =
+    // "ca-app-pub-3940256099942544/1033173712";
 
     private int SOUND_USED_MAX = 12;
-    //TODO:lock画面
+    // TODO:lock画面
     private ConstraintLayout lockOverlay;
 
     private int set_interval;
-    private Spinner sp_sound1;      //通常音選択
-    private Spinner sp_sound2;      //SOS音選択
-    private Spinner sp_light2;      //SOSライト選択
-    private Spinner sp_interval;    //再生間隔
-    private SeekBar seek_volume1;    //通常音量
+    private Spinner sp_sound1; // 通常音選択
+    private Spinner sp_sound2; // SOS音選択
+    private Spinner sp_light2; // SOSライト選択
+    private Spinner sp_interval; // 再生間隔
+    private SeekBar seek_volume1; // 通常音量
 
-    private ToggleButton toggle_normal;      //通常音状態（ON/OFF）
-    private ToggleButton toggle_emergency;   //異常音状態（ON/OFF）
+    private ToggleButton toggle_normal; // 通常音状態（ON/OFF）
+    private ToggleButton toggle_emergency; // 異常音状態（ON/OFF）
 
     final private int INTERVAL_0 = 0;
     final private int INTERVAL_1 = 1000;
@@ -234,25 +243,24 @@ public class MainActivity extends AppCompatActivity
     final private int INTERVAL_30 = 30000;
     final private int INTERVAL_RANDUM = -1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        // Toolbar toolbar = findViewById(R.id.toolbar);
+        // setSupportActionBar(toolbar);
 
-        //  国設定
+        // 国設定
         _local = Locale.getDefault();
         _language = _local.getLanguage();
         _country = _local.getCountry();
 
-        //音
+        // 音
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         now_volume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        //カメラ初期化
+        // カメラ初期化
         mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         mCameraManager.registerTorchCallback(new CameraManager.TorchCallback() {
             @Override
@@ -263,25 +271,50 @@ public class MainActivity extends AppCompatActivity
             }
         }, new Handler());
 
-        //広告 TODO:画面キャプチャ用に広告を削除
+        // 広告 LARGE_BANNER + AdListener + リトライ
         MobileAds.initialize(this, initializationStatus -> {
             mAdview = findViewById(R.id.adView);
+
+            // AdListenerでエラー検知 + リトライロジック
+            mAdview.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    bannerRetryCount = 0;
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    // 指数バックオフでリトライ（最大3回）
+                    if (bannerRetryCount < BANNER_MAX_RETRY) {
+                        bannerRetryCount++;
+                        long delayMs = (long) Math.pow(2, bannerRetryCount) * 1000; // 2s, 4s, 8s
+                        new Handler().postDelayed(() -> {
+                            if (mAdview != null) {
+                                mAdview.loadAd(new AdRequest.Builder().build());
+                            }
+                        }, delayMs);
+                    }
+                }
+
+
+            });
+
+            // 初回ロード
+            bannerRetryCount = 0;
             AdRequest adRequest = new AdRequest.Builder().build();
             mAdview.loadAd(adRequest);
+
+            // SDK初期化完了後にリワード・インタースティシャル広告もロード
+            loadRewardedAd();
+            loadInterstitialAd();
         });
 
-
-        //動画リワード
-        loadRewardedAd();
-        //インタースティシャル広告
-        loadInterstitialAd();
-
-        //各種イベント登録
+        // 各種イベント登録
         toggleSelect();
         seekSelect();
         spinnerSelect();
 
-        //TODO:lock画面
+        // TODO:lock画面
         lockOverlay = findViewById(R.id.lockOverlay);
         // 長押しでロック解除する設定 (3秒)
         lockOverlay.setOnTouchListener(new View.OnTouchListener() {
@@ -310,7 +343,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /************************************************************
-        インタースティシャル広告をロード
+     * インタースティシャル広告をロード
      ************************************************************/
     private void loadInterstitialAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -319,48 +352,49 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                 mInterstitialAd = interstitialAd;
-                Log.d("AdMob", "インタースティシャル広告がロードされました");
 
                 // 広告のコールバックを設定（閉じた後の動作）
                 mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                     @Override
                     public void onAdDismissedFullScreenContent() {
-                        Log.d("AdMob", "広告が閉じられました");
-                        mInterstitialAd = null; // 再ロードの準備
+                        mInterstitialAd = null;
                         loadInterstitialAd(); // 次の広告をロード
                     }
 
                     @Override
                     public void onAdFailedToShowFullScreenContent(com.google.android.gms.ads.AdError adError) {
-                        Log.d("AdMob", "広告の表示に失敗しました: " + adError.getMessage());
-                        mInterstitialAd = null; // 再ロードの準備
+                        mInterstitialAd = null;
+                        loadInterstitialAd(); // 表示失敗時もリロード
                     }
                 });
             }
 
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.d("AdMob", "インタースティシャル広告のロードに失敗: " + loadAdError.getMessage());
                 mInterstitialAd = null;
+                // ロード失敗時に5秒後リトライ
+                new Handler().postDelayed(() -> {
+                    loadInterstitialAd();
+                }, 5000);
             }
         });
     }
+
     // インタースティシャル広告を表示
     private void showInterstitialAd() {
         if (mInterstitialAd != null) {
             mInterstitialAd.show(this);
         } else {
-            Log.d("AdMob", "インタースティシャル広告はまだロードされていません");
-            loadInterstitialAd(); // すぐに次の広告をロード
+            loadInterstitialAd();
         }
     }
+
     private void fullAdDisplay() {
         int max_num = SOUND_USED_MAX;
         int max_plus = db_data3;
         if (max_plus >= 3) {
             max_plus = max_plus / 3;
-        }
-        else{
+        } else {
             max_plus = 0;
         }
         max_num = max_num + max_plus;
@@ -371,8 +405,9 @@ public class MainActivity extends AppCompatActivity
         if (db_data2 < 0) {
             db_data2 = max_num;
         }
+
         if (db_data2 == 1) {
-            //全面広告表示
+            // 全面広告表示
             showInterstitialAd();
         }
         if (db_data2 == 2 || db_data2 == 3) {
@@ -386,7 +421,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /************************************************************
-         リワード広告処理
+     * リワード広告処理
      ************************************************************/
     private void loadRewardedAd() {
         RewardedAd.load(this,
@@ -399,123 +434,123 @@ public class MainActivity extends AppCompatActivity
                         Context context = getApplicationContext();
                         if (_language.equals("ja")) {
                             Toast.makeText(context, "報酬動画準備OK !!", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
+                        } else {
                             Toast.makeText(context, "Movie OK !!", Toast.LENGTH_SHORT).show();
                         }
                     }
+
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
-//                        Log.d("TAG", "The rewarded ad wasn't loaded yet.");
+                        // Log.d("TAG", "The rewarded ad wasn't loaded yet.");
                     }
                 });
     }
-    public void RdShow(){
+
+    public void RdShow() {
         if (rewardedAd != null) {
             Activity activityContext = MainActivity.this;
             rewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
                 @Override
                 public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
                     // Handle the reward.
-//                    Log.d("TAG", "The user earned the reward.");
+                    // Log.d("TAG", "The user earned the reward.");
                     int rewardAmount = rewardItem.getAmount();
                     String rewardType = rewardItem.getType();
                     RdPresent();
                 }
             });
         } else {
-//            Log.d("TAG", "The rewarded ad wasn't ready yet.");
+            // Log.d("TAG", "The rewarded ad wasn't ready yet.");
         }
     }
 
     public void RdPresent() {
-//  public void onRewarded(RewardItem reward) {
+        // public void onRewarded(RewardItem reward) {
         // Reward the user.
 
         int tmp_data = db_data3;
         // 再生回数のセット
-        db_data3 += 1;   //爆竹と花火を有効
+        db_data3 += 1; // 爆竹と花火を有効
         // 動画視聴の日付
-        //db_data2 = getNowDate();
+        // db_data2 = getNowDate();
 
-        //ユーザーレベルアップ
+        // ユーザーレベルアップ
         if (_language.equals("ja")) {
             Toast.makeText(this, "視聴回数UP!：" + (tmp_data) + "  → " + (db_data3), Toast.LENGTH_SHORT).show();
-        }
-        else{
+        } else {
             Toast.makeText(this, "COUNT UP!：" + (tmp_data) + "  → " + (db_data3), Toast.LENGTH_SHORT).show();
         }
         AppDBUpdated();
         screen_display();
-        loadRewardedAd();   //リワード動画再生の準備
+        loadRewardedAd(); // リワード動画再生の準備
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        //センサ初期化
+        // センサ初期化
         if (sensorManager == null) {
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
 
         // TODO: 設定処理の見直し
-        //  設定関連読み込み
+        // 設定関連読み込み
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         /*
-        //音量
-        String str1 = sharedPreferences.getString("play_volume", "2");
-        sound_volume = Integer.parseInt(str1);
-        //鈴音
-        String str2 = sharedPreferences.getString("bell_kind", "1");
-        bell_kind = Integer.parseInt(str2);
-        //銃声
-        String str3 = sharedPreferences.getString("gun_kind", "1");
-        gun_kind = Integer.parseInt(str3);
-        //雷鳴
-        String str4 = sharedPreferences.getString("thunder_kind", "1");
-        thunder_kind = Integer.parseInt(str4);
-        //間隔
-        String str5 = sharedPreferences.getString("play_delay", "0");
-        play_delay = Integer.parseInt(str5);
-        if(play_delay == 0){
-            play_delay = 10; isRandomMode = false;
-        }
-        else if(play_delay < 99){
-            play_delay *= 1000; isRandomMode = false;
-        }
-        else{
-            play_delay = 10; isRandomMode = true;
-        }
-
-        //緊急音
-        emergency_kind = sharedPreferences.getString("emergency_kind", "thunder");
-        //音量戻し
-        volume_back = sharedPreferences.getBoolean("volume_back", false);
-        //画面タイプ
-        String str6 = sharedPreferences.getString("screen_type", "1");
-        screen_type = Integer.parseInt(str6);
-        */
+         * //音量
+         * String str1 = sharedPreferences.getString("play_volume", "2");
+         * sound_volume = Integer.parseInt(str1);
+         * //鈴音
+         * String str2 = sharedPreferences.getString("bell_kind", "1");
+         * bell_kind = Integer.parseInt(str2);
+         * //銃声
+         * String str3 = sharedPreferences.getString("gun_kind", "1");
+         * gun_kind = Integer.parseInt(str3);
+         * //雷鳴
+         * String str4 = sharedPreferences.getString("thunder_kind", "1");
+         * thunder_kind = Integer.parseInt(str4);
+         * //間隔
+         * String str5 = sharedPreferences.getString("play_delay", "0");
+         * play_delay = Integer.parseInt(str5);
+         * if(play_delay == 0){
+         * play_delay = 10; isRandomMode = false;
+         * }
+         * else if(play_delay < 99){
+         * play_delay *= 1000; isRandomMode = false;
+         * }
+         * else{
+         * play_delay = 10; isRandomMode = true;
+         * }
+         * 
+         * //緊急音
+         * emergency_kind = sharedPreferences.getString("emergency_kind", "thunder");
+         * //音量戻し
+         * volume_back = sharedPreferences.getBoolean("volume_back", false);
+         * //画面タイプ
+         * String str6 = sharedPreferences.getString("screen_type", "1");
+         * screen_type = Integer.parseInt(str6);
+         */
         sos_volume_max = sharedPreferences.getBoolean("sos_volume_max", false);
 
-        //センサ監視起動
+        // センサ監視起動
         this.emerTimer = new Timer();
-        //タスククラスインスタンス生成
+        // タスククラスインスタンス生成
         this.emerTimerTask = new EmerTimerTask();
-        //タイマースケジュール設定＆開始
+        // タイマースケジュール設定＆開始
         this.emerTimer.schedule(emerTimerTask, 500, 1000);
 
-        //DB load
+        // DB load
         helper = new MyOpenHelper(this);
         AppDBInitRoad();
         screen_display();
 
-        //TODO:test_make
-        //db_data3 = 6;
+        // TODO:test_make
+        // db_data3 = 6;
 
-        //評価ポップアップ処理
-        if (db_data4 <= REVIEW_POP){
-            if (ReviewCount != 0){
+        // 評価ポップアップ処理
+        if (db_data4 <= REVIEW_POP) {
+            if (ReviewCount != 0) {
                 db_data4++;
                 ReviewCount = 0;
             }
@@ -524,36 +559,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     /* 効果音スタート */
-    public void soundStart(int type, int mode){
+    public void soundStart(int type, int mode) {
 
-        //繰り返し再生回数をゼロにリセット
+        // 繰り返し再生回数をゼロにリセット
         playcount = 0;
         int tmp_gun_type = 0;
 
-        if (mode == 0){
+        if (mode == 0) {
             isEmergencyMode = false;
-        }
-        else{
+        } else {
             isEmergencyMode = true;
         }
 
         play_random_delay = 0;
 
-        switch(type) {
+        switch (type) {
             case 1:
-                //タイマーインスタンス生成
+                // タイマーインスタンス生成
                 this.mainTimer1 = new Timer();
-                //タスククラスインスタンス生成
+                // タスククラスインスタンス生成
                 this.mainTimerTask1 = new MainTimerTask();
-                //タイマースケジュール設定＆開始
-                //ＢＧＭ
+                // タイマースケジュール設定＆開始
+                // ＢＧＭ
                 soundSelect(db_normal);
                 set_interval = soundInterval(db_interval);
-                if (set_interval == INTERVAL_RANDUM){
+                if (set_interval == INTERVAL_RANDUM) {
                     isRandomMode = true;
                     set_interval = 100;
-                }
-                else {
+                } else {
                     isRandomMode = false;
                     if (set_interval < INTERVAL_1) {
                         set_interval = 100;
@@ -574,18 +607,20 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case 2:
-                //タイマーインスタンス生成
+                // タイマーインスタンス生成
                 this.mainTimer2 = new Timer();
-                //タスククラスインスタンス生成
+                // タスククラスインスタンス生成
                 this.mainTimerTask2 = new MainTimerTask();
-                //タイマースケジュール設定＆開始
-                if (isEmergencyMode == true)    this.mainTimer2.schedule(mainTimerTask2, 500, 100);
-                else                            this.mainTimer2.schedule(mainTimerTask2, 500, play_delay);
+                // タイマースケジュール設定＆開始
+                if (isEmergencyMode == true)
+                    this.mainTimer2.schedule(mainTimerTask2, 500, 100);
+                else
+                    this.mainTimer2.schedule(mainTimerTask2, 500, play_delay);
 
-                //ＢＧＭ
+                // ＢＧＭ
                 tmp_gun_type = gun_kind;
-                if (db_data3 < 1 && (gun_kind == 4 || gun_kind == 5 || gun_kind == 6)){
-                    tmp_gun_type = 1;   // 動画閲覧しないと設定反映されない
+                if (db_data3 < 1 && (gun_kind == 4 || gun_kind == 5 || gun_kind == 6)) {
+                    tmp_gun_type = 1; // 動画閲覧しないと設定反映されない
                 }
                 if (this.mainTimer1 != null) {
                     this.mainTimer1.cancel();
@@ -600,13 +635,13 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case 3:
-                //タイマーインスタンス生成
+                // タイマーインスタンス生成
                 this.mainTimer3 = new Timer();
-                //タスククラスインスタンス生成
+                // タスククラスインスタンス生成
                 this.mainTimerTask3 = new MainTimerTask();
-                //タイマースケジュール設定＆開始
+                // タイマースケジュール設定＆開始
                 this.mainTimer3.schedule(mainTimerTask3, 500, 100);
-                //ＢＧＭ
+                // ＢＧＭ
                 soundSelect(db_emergency);
                 isRandomMode = false;
                 if (this.mainTimer1 != null) {
@@ -622,27 +657,24 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-
-        //音量調整
-        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-       // 音量を設定する
+        // 音量調整
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        // 音量を設定する
         int tmp_volume = 0;
-        if (type == 3 && sos_volume_max == true){
+        if (type == 3 && sos_volume_max == true) {
             tmp_volume = 15;
-        }
-        else{
+        } else {
             tmp_volume = db_volume1;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            tmp_volume = tmp_volume * 2;  //30段階になったため
+            tmp_volume = tmp_volume * 2; // 30段階になったため
         }
         am.setStreamVolume(AudioManager.STREAM_MUSIC, tmp_volume, 0);
 
-        //ライト点灯処理
+        // ライト点灯処理
         if (type == 3) {
             light_ON(db_light2);
-        }
-        else{
+        } else {
             light_OFF();
         }
 
@@ -650,8 +682,7 @@ public class MainActivity extends AppCompatActivity
         String mess = "";
         if (_language.equals("ja")) {
             mess = "他のアプリを開くと【連続再生】が停止する場合があります";
-        }
-        else{
+        } else {
             mess = "Continuous playback may stop if you open another app.";
         }
         Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
@@ -659,7 +690,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /* 効果音ストップ */
-    public void soundStop(int type){
+    public void soundStop(int type) {
         play_random_delay = 0;
         if (this.mainTimer1 != null) {
             this.mainTimer1.cancel();
@@ -689,82 +720,86 @@ public class MainActivity extends AppCompatActivity
 
         // 再生中
         if (this.mainTimer1 != null || this.mainTimer2 != null ||
-            this.mainTimer3 != null || emergency_playing == true ){
-            //何もしない
+                this.mainTimer3 != null || emergency_playing == true) {
+            // 何もしない
         }
         // 全て停止中
-        else{
+        else {
             showStylishPopup();
-            //PresentPopup();
+            // PresentPopup();
         }
     }
 
     /*
-    // プレゼント処理
-    public void PresentPopup(){
-        AlertDialog.Builder guide = new AlertDialog.Builder(this);
-        TextView vmessage = new TextView(this);
-        int level = 0;
-        String pop_message = "";
-        String btn_yes = "";
-        String btn_no = "";
-
-        //ユーザーレベル算出
-        if (_language.equals("ja")) {
-
-            pop_message += "\n\n広告動画を視聴して[報酬]を得ますか？" +
-                    "\n [報酬]は再生音が追加されます"+
-                    "\n\n\n 1回視聴 [爆竹／花火]" +
-                    "\n 2回視聴 [狼遠吠え／ﾍﾟｯﾄﾎﾞﾄﾙ]"+
-                    "\n 3回視聴以上は何も変わりません"+
-                    "\n\n\n 現在の視聴回数 : "+db_data3+"回"+"\n\n\n\n";
-
-            btn_yes += "視聴";
-            btn_no += "中止";
-        }
-        else{
-            pop_message += "\n\nWould you like to watch an ad video and receive [reward]?" +
-                    "\n [Reward] will include an additional sound." +
-                    "\n\n\n 1 view [Firecrackers/Fireworks]" +
-                    "\n 2 views [Wolf Howl/Bottle]"+
-                    "\n No change after 3 views"+
-                    "\n\n\n Current number of views [ "+db_data3+" ]"+"\n\n\n\n";
-
-            btn_yes += "YES";
-            btn_no += "N O";
-        }
-
-        //メッセージ
-        vmessage.setText(pop_message);
-        vmessage.setBackgroundColor(Color.DKGRAY);
-        vmessage.setTextColor(Color.WHITE);
-        vmessage.setGravity(Gravity.CENTER);
-        vmessage.setTextSize(16);
-
-        //タイトル
-        guide.setTitle("TIPS");
-        guide.setIcon(R.drawable.present);
-        guide.setView(vmessage);
-
-        guide.setPositiveButton(btn_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                RdShow();
-            }
-        });
-        guide.setNegativeButton(btn_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                screen_display();
-            }
-        });
-
-        guide.create();
-        guide.show();
-    }*/
+     * // プレゼント処理
+     * public void PresentPopup(){
+     * AlertDialog.Builder guide = new AlertDialog.Builder(this);
+     * TextView vmessage = new TextView(this);
+     * int level = 0;
+     * String pop_message = "";
+     * String btn_yes = "";
+     * String btn_no = "";
+     * 
+     * //ユーザーレベル算出
+     * if (_language.equals("ja")) {
+     * 
+     * pop_message += "\n\n広告動画を視聴して[報酬]を得ますか？" +
+     * "\n [報酬]は再生音が追加されます"+
+     * "\n\n\n 1回視聴 [爆竹／花火]" +
+     * "\n 2回視聴 [狼遠吠え／ﾍﾟｯﾄﾎﾞﾄﾙ]"+
+     * "\n 3回視聴以上は何も変わりません"+
+     * "\n\n\n 現在の視聴回数 : "+db_data3+"回"+"\n\n\n\n";
+     * 
+     * btn_yes += "視聴";
+     * btn_no += "中止";
+     * }
+     * else{
+     * pop_message +=
+     * "\n\nWould you like to watch an ad video and receive [reward]?" +
+     * "\n [Reward] will include an additional sound." +
+     * "\n\n\n 1 view [Firecrackers/Fireworks]" +
+     * "\n 2 views [Wolf Howl/Bottle]"+
+     * "\n No change after 3 views"+
+     * "\n\n\n Current number of views [ "+db_data3+" ]"+"\n\n\n\n";
+     * 
+     * btn_yes += "YES";
+     * btn_no += "N O";
+     * }
+     * 
+     * //メッセージ
+     * vmessage.setText(pop_message);
+     * vmessage.setBackgroundColor(Color.DKGRAY);
+     * vmessage.setTextColor(Color.WHITE);
+     * vmessage.setGravity(Gravity.CENTER);
+     * vmessage.setTextSize(16);
+     * 
+     * //タイトル
+     * guide.setTitle("TIPS");
+     * guide.setIcon(R.drawable.present);
+     * guide.setView(vmessage);
+     * 
+     * guide.setPositiveButton(btn_yes, new DialogInterface.OnClickListener() {
+     * 
+     * @Override
+     * public void onClick(DialogInterface dialog, int which) {
+     * RdShow();
+     * }
+     * });
+     * guide.setNegativeButton(btn_no, new DialogInterface.OnClickListener() {
+     * 
+     * @Override
+     * public void onClick(DialogInterface dialog, int which) {
+     * screen_display();
+     * }
+     * });
+     * 
+     * guide.create();
+     * guide.show();
+     * }
+     */
 
     /**
-     *  DB（データベース）関連の処理
+     * DB（データベース）関連の処理
      *
      */
     /* DB初期設定 */
@@ -812,7 +847,7 @@ public class MainActivity extends AppCompatActivity
         sql.append(" FROM appinfo;");
         try {
             Cursor cursor = db.rawQuery(sql.toString(), null);
-            //TextViewに表示
+            // TextViewに表示
             StringBuilder text = new StringBuilder();
             if (cursor.moveToNext()) {
                 data = cursor.getInt(0);
@@ -868,11 +903,11 @@ public class MainActivity extends AppCompatActivity
                 db.close();
             }
             /*
-            if (ret == -1) {
-                Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
-            }
+             * if (ret == -1) {
+             * Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
+             * } else {
+             * Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
+             * }
              */
 
         } else {
@@ -894,9 +929,11 @@ public class MainActivity extends AppCompatActivity
             db_data8 = data8;
             db_data9 = data9;
             db_data10 = data10;
-//            Toast.makeText(this, "Data Loading...  Access Level:" + db_user_lv, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Data Loading... Access Level:" + db_user_lv,
+            // Toast.LENGTH_SHORT).show();
         }
     }
+
     /* DB更新 */
     public void AppDBUpdated() {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -926,11 +963,11 @@ public class MainActivity extends AppCompatActivity
             db.close();
         }
         /*
-        if (ret == -1){
-            Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Saving.... OK ", Toast.LENGTH_SHORT).show();
-        }
+         * if (ret == -1){
+         * Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
+         * } else {
+         * Toast.makeText(this, "Saving.... OK ", Toast.LENGTH_SHORT).show();
+         * }
          */
     }
 
@@ -945,7 +982,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent1 = new android.content.Intent(this, BbSetActivity.class);
             startActivity(intent1);
@@ -957,13 +994,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        switch(event.sensor.getType()){
+        switch (event.sensor.getType()) {
             case Sensor.TYPE_MAGNETIC_FIELD:
-                geomagnetic = event.values.clone(); break;
+                geomagnetic = event.values.clone();
+                break;
             case Sensor.TYPE_ACCELEROMETER:
-                gravity = event.values.clone(); break;
+                gravity = event.values.clone();
+                break;
         }
-        if(geomagnetic != null && gravity != null) {
+        if (geomagnetic != null && gravity != null) {
             SensorManager.getRotationMatrix(rotationMatrix, null, gravity, geomagnetic);
             SensorManager.getOrientation(rotationMatrix, attitude);
 
@@ -971,12 +1010,13 @@ public class MainActivity extends AppCompatActivity
             int pitch;
             pitch = (int) (attitude[1] * RAD2DEG);
             roll = (int) (attitude[2] * RAD2DEG);
-            Log.v("回転", "roll[0]=" +(int) (attitude[0] * RAD2DEG) + " roll[1] ="+(int) (attitude[1] * RAD2DEG) + " roll[2] = "+roll + " pit=" + pitch_zero + " rp=" +roll_plus + " rm="+roll_minus);
+            Log.v("回転", "roll[0]=" + (int) (attitude[0] * RAD2DEG) + " roll[1] =" + (int) (attitude[1] * RAD2DEG)
+                    + " roll[2] = " + roll + " pit=" + pitch_zero + " rp=" + roll_plus + " rm=" + roll_minus);
             if (emergency_playing == false) {
-                if (roll> 55 && roll <80) {
+                if (roll > 55 && roll < 80) {
                     roll_plus += 1;
                 }
-                if (roll< -55 && roll >-80) {
+                if (roll < -55 && roll > -80) {
                     roll_minus += 1;
                 }
             }
@@ -999,10 +1039,10 @@ public class MainActivity extends AppCompatActivity
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        temp_date += year*10000;
-        temp_date += month*100;
+        temp_date += year * 10000;
+        temp_date += month * 100;
         temp_date += day;
-//        Toast.makeText(this, "date="+temp_date, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "date="+temp_date, Toast.LENGTH_SHORT).show();
         return temp_date;
     }
 
@@ -1021,8 +1061,7 @@ public class MainActivity extends AppCompatActivity
                         Thread.sleep(100);
                         if (play_random_delay <= 0) {
                             play_random_delay = 0;
-                        }
-                        else{
+                        } else {
                             return;
                         }
                     }
@@ -1030,16 +1069,15 @@ public class MainActivity extends AppCompatActivity
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //ここに定周期で実行したい処理を記述します
+            // ここに定周期で実行したい処理を記述します
             mHandler.post(new Runnable() {
                 public void run() {
 
-                    //BGMタイマー起動
+                    // BGMタイマー起動
                     if (countText != null && countText.isPlaying() == false) {
-                        if (isRandomMode == true && play_random_delay > 0){
-                            //ランダムタイムアップまで待つ;
-                        }
-                        else {
+                        if (isRandomMode == true && play_random_delay > 0) {
+                            // ランダムタイムアップまで待つ;
+                        } else {
                             countText.start();
                             if (isRandomMode == true && isEmergencyMode == false) {
                                 play_random_delay = (new Random().nextInt(15) + 8) * 1000;
@@ -1050,6 +1088,7 @@ public class MainActivity extends AppCompatActivity
             });
         }
     }
+
     /**
      * タイマータスク派生クラス
      * run()に定周期で処理したい内容を記述
@@ -1058,21 +1097,19 @@ public class MainActivity extends AppCompatActivity
     public class EmerTimerTask extends TimerTask {
         @Override
         public void run() {
-            //ここに定周期で実行したい処理を記述します
+            // ここに定周期で実行したい処理を記述します
             eHandler.post(new Runnable() {
                 public void run() {
                     sec_five += 1;
-                    if (sec_five <= 3) {    // ３秒以内にイベントを捉えた場合に限り
+                    if (sec_five <= 3) { // ３秒以内にイベントを捉えた場合に限り
                         if (roll_plus >= 4 && roll_minus >= 4) {
-//                        if (pitch_zero >= 5 && roll_plus >= 3 && roll_minus >= 3) {
+                            // if (pitch_zero >= 5 && roll_plus >= 3 && roll_minus >= 3) {
                             pitch_zero = 0;
                             roll_minus = 0;
                             roll_plus = 0;
-//                            emergency_Start();
+                            // emergency_Start();
                         }
-                    }
-                    else
-                    {
+                    } else {
                         pitch_zero = 0;
                         roll_minus = 0;
                         roll_plus = 0;
@@ -1091,14 +1128,13 @@ public class MainActivity extends AppCompatActivity
     public class BlinkingTask extends TimerTask {
         @Override
         public void run() {
-            //ここに定周期で実行したい処理を記述します
-            bHandler.post( new Runnable() {
+            // ここに定周期で実行したい処理を記述します
+            bHandler.post(new Runnable() {
                 public void run() {
                     light_on_exec();
-                    if (blinking){
+                    if (blinking) {
                         blinking = false;
-                    }
-                    else{
+                    } else {
                         blinking = true;
                     }
                 }
@@ -1107,119 +1143,138 @@ public class MainActivity extends AppCompatActivity
     }
 
     /*
-     *   ライトＯＮ
-     * */
+     * ライトＯＮ
+     */
     public void light_on_exec() {
-        if(mCameraId == null){
+        if (mCameraId == null) {
             return;
         }
         try {
             mCameraManager.setTorchMode(mCameraId, blinking);
         } catch (CameraAccessException e) {
-            //エラー処理
+            // エラー処理
             e.printStackTrace();
         }
     }
+
     public void light_ON(int type) {
-        if (type == 1){
+        if (type == 1) {
             blinking = true;
             light_on_exec();
-        }
-        else if(type == 2){
+        } else if (type == 2) {
             this.blinkTimer = new Timer();
             this.blinkTimerTask = new BlinkingTask();
             this.blinkTimer.schedule(blinkTimerTask, 500, 500);
         }
     }
+
     /*
-     *   ライトＯＦＦ
-     * */
+     * ライトＯＦＦ
+     */
     public void light_OFF() {
 
         pitch_zero = 0;
         roll_plus = 0;
         roll_minus = 0;
 
-        if(mCameraId == null){
+        if (mCameraId == null) {
             return;
         }
         try {
             mCameraManager.setTorchMode(mCameraId, false);
         } catch (CameraAccessException e) {
-            //エラー処理
+            // エラー処理
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         Log.v("LifeCycle", "------------------------------>onResume");
 
-        //センサ関連
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
-        //動画
-        //mRewardedVideoAd.resume(this);
+        // センサ関連
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        // 動画
+        // mRewardedVideoAd.resume(this);
+
+        // バナー広告のライフサイクル管理
+        if (mAdview != null) {
+            mAdview.resume();
+        }
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         Log.v("LifeCycle", "------------------------------>onPause");
-        //  DB更新
+        // DB更新
         AppDBUpdated();
-        //mRewardedVideoAd.pause(this);
+        // mRewardedVideoAd.pause(this);
+
+        // バナー広告のライフサイクル管理
+        if (mAdview != null) {
+            mAdview.pause();
+        }
     }
 
     @Override
-    public void onRestart(){
+    public void onRestart() {
         super.onRestart();
         Log.v("LifeCycle", "------------------------------>onRestart");
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         Log.v("LifeCycle", "------------------------------>onStop");
-        //  DB更新
+        // DB更新
         AppDBUpdated();
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
+        // バナー広告のライフサイクル管理（superの前にdestroy）
+        if (mAdview != null) {
+            mAdview.destroy();
+        }
         super.onDestroy();
         Log.v("LifeCycle", "------------------------------>onDestroy");
 
-        //センサ関連
-/*        if(sensorManager != null) {
-            sensorManager.unregisterListener(this);
-        }*/
-        //カメラ
-        if (mCameraManager != null)
-        {
+        // センサ関連
+        /*
+         * if(sensorManager != null) {
+         * sensorManager.unregisterListener(this);
+         * }
+         */
+        // カメラ
+        if (mCameraManager != null) {
             mCameraManager = null;
         }
 
-        /* 音量の戻しの処理
-        if (volume_back == true) {
-            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            am.setStreamVolume(AudioManager.STREAM_MUSIC, now_volume, 0);
-            am = null;
-        }
+        /*
+         * 音量の戻しの処理
+         * if (volume_back == true) {
+         * AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+         * am.setStreamVolume(AudioManager.STREAM_MUSIC, now_volume, 0);
+         * am = null;
+         * }
          */
 
-        //  DB更新
+        // DB更新
         AppDBUpdated();
-        //動画
-        //mRewardedVideoAd.destroy(this);
+        // 動画
+        // mRewardedVideoAd.destroy(this);
     }
 
-    //  戻るボタン
+    // 戻るボタン
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK) {
-            //TODO:lock画面
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // TODO:lock画面
             // ロック表示中の時は、戻るボタンを完全に無効化
             if (lockOverlay != null && lockOverlay.getVisibility() == View.VISIBLE) {
                 return true;
@@ -1229,8 +1284,7 @@ public class MainActivity extends AppCompatActivity
             // 親クラスのdispatchKeyEvent()を呼び出さずにtrueを返す
             if (this.mainTimer1 == null && this.mainTimer2 == null && this.mainTimer3 == null) {
                 /* そのまま終了へ */
-            }
-            else {
+            } else {
                 AlertDialog.Builder ad = new AlertDialog.Builder(this);
                 if (_language.equals("ja")) {
                     ad.setTitle("[戻る]は操作無効です");
@@ -1253,7 +1307,6 @@ public class MainActivity extends AppCompatActivity
         return super.onKeyDown(keyCode, event);
     }
 
-
     private void ShowRatingPopup() {
 
         String str_ttl = "";
@@ -1261,12 +1314,11 @@ public class MainActivity extends AppCompatActivity
         String str_btn_ok = "";
         String str_btn_ng = "";
 
-        //アプリを起動して 7回目の時
-        if (db_data4 != REVIEW_POP){
+        // アプリを起動して 7回目の時
+        if (db_data4 != REVIEW_POP) {
             return;
-        }
-        else {
-            db_data4++; //ポップアップを１回表示にするため、ここでカウントする
+        } else {
+            db_data4++; // ポップアップを１回表示にするため、ここでカウントする
         }
         if (_language.equals("ja")) {
             str_ttl = "★☆アプリ評価のお願い☆★";
@@ -1276,10 +1328,11 @@ public class MainActivity extends AppCompatActivity
                     "\n\n\n";
             str_btn_ok = "評価する";
             str_btn_ng = "　後で　";
-        }else{
+        } else {
             str_ttl = " Please rate the app ";
             str_mess = "\nThank you for using it all the time.\n" +
-                    "\nThank you to all of you who are using it a lot. Would you like to rate the app? It would be encouraging if you would rate us." +
+                    "\nThank you to all of you who are using it a lot. Would you like to rate the app? It would be encouraging if you would rate us."
+                    +
                     "\n\n(This notification is only for this time)" +
                     "\n\n\n";
             str_btn_ok = "review";
@@ -1318,8 +1371,7 @@ public class MainActivity extends AppCompatActivity
                     "\n\n" +
                     "\n\n\n";
             str_btn = "確認";
-        }
-        else{
+        } else {
             str_ttl = "Connection Failed";
             str_mess = "\nFailed to access Site.\n" +
                     "\n" +
@@ -1352,32 +1404,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     /****************************************************
-        新画面処理
+     * 新画面処理
      ***************************************************/
 
-    /* **************************************************
-        表示処理
-    ****************************************************/
-    public void screen_display(){
+    /*
+     * **************************************************
+     * 表示処理
+     ****************************************************/
+    public void screen_display() {
         /* SEEK */
         if (seek_volume1 == null) {
             seek_volume1 = (SeekBar) findViewById(R.id.seek_volume1);
         }
-        if (db_volume1 > 15)  db_volume1 = 15;
+        if (db_volume1 > 15)
+            db_volume1 = 15;
         seek_volume1.setProgress(db_volume1);
 
         /* SPINNER */
         if (sp_sound1 == null) {
             sp_sound1 = (Spinner) findViewById(R.id.sp_sound1);
         }
-        if (db_normal > 11)  db_normal = 11 - 1;
-        sp_sound1.setSelection(db_normal);  //通常 鈴音
+        if (db_normal > 11)
+            db_normal = 11 - 1;
+        sp_sound1.setSelection(db_normal); // 通常 鈴音
 
         if (sp_sound2 == null) {
             sp_sound2 = (Spinner) findViewById(R.id.sp_sound2);
         }
-        if (db_emergency > 11)  db_emergency = 11 -1;
-        sp_sound2.setSelection(db_emergency);   //SOS 雷鳴音
+        if (db_emergency > 11)
+            db_emergency = 11 - 1;
+        sp_sound2.setSelection(db_emergency); // SOS 雷鳴音
 
         if (sp_light2 == null) {
             sp_light2 = (Spinner) findViewById(R.id.sp_light2);
@@ -1387,60 +1443,56 @@ public class MainActivity extends AppCompatActivity
         if (sp_interval == null) {
             sp_interval = (Spinner) findViewById(R.id.sp_interval);
         }
-        if (db_interval > 10)  db_interval = 10 -1;
+        if (db_interval > 10)
+            db_interval = 10 - 1;
         sp_interval.setSelection(db_interval);
 
-
-        //再生中の表示切り替え
+        // 再生中の表示切り替え
         LinearLayout layout_normal = findViewById(R.id.linearLayout11);
         LinearLayout layout_emer = findViewById(R.id.linearLayout21);
         ImageView img_normal = (ImageView) findViewById(R.id.img_normal);
         ImageView img_emer = (ImageView) findViewById(R.id.img_emergency);
 
-        if (mainTimer1 == null){
+        if (mainTimer1 == null) {
             img_normal.setImageResource(R.drawable.bell_off2);
             layout_normal.setBackgroundResource(R.drawable.bak_inactive);
-        }
-        else{
+        } else {
             img_normal.setImageResource(R.drawable.bell_on2);
             layout_normal.setBackgroundResource(R.drawable.bak_active);
         }
-        if (mainTimer3 == null){
+        if (mainTimer3 == null) {
             img_emer.setImageResource(R.drawable.sos_off2);
             layout_emer.setBackgroundResource(R.drawable.bak_inactive);
-        }
-        else{
+        } else {
             img_emer.setImageResource(R.drawable.sos_on2);
             layout_emer.setBackgroundResource(R.drawable.bak_active);
         }
 
         TextView v = (TextView) findViewById(R.id.textView);
         v.setBackgroundTintList(null);
-        if(soundIsPlaying() == false){
-             if (_language.equals("ja")) {
+        if (soundIsPlaying() == false) {
+            if (_language.equals("ja")) {
                 v.setText("通常音 or 緊急音を選択して\n「PLAY」をタップして下さい");
-            }
-            else{
-                 v.setText("Select Normal or Emergency Sound\nand tap [PLAY]");
+            } else {
+                v.setText("Select Normal or Emergency Sound\nand tap [PLAY]");
             }
             v.setTextColor(Color.parseColor("black"));
-        }
-        else{
+        } else {
             if (_language.equals("ja")) {
                 v.setText("＊＊注意＊＊ 連続再生を継続する場合\n画面ロック(右下の鍵ｱｲｺﾝ)を推奨します\n停止する場合は「STOP」をタップして下さい");
-            }
-            else{
-                v.setText("**NOTICE**\nIf you want to continue playing continuously, we recommend you lock your screen (lock icon). To stop playback, tap [STOP]");
+            } else {
+                v.setText(
+                        "**NOTICE**\nIf you want to continue playing continuously, we recommend you lock your screen (lock icon). To stop playback, tap [STOP]");
             }
             v.setTextColor(Color.parseColor("red"));
         }
     }
 
-
-    /* **************************************************
-        アプリボタン処理
-    ****************************************************/
-    public void toggleSelect(){
+    /*
+     * **************************************************
+     * アプリボタン処理
+     ****************************************************/
+    public void toggleSelect() {
         toggle_normal = (ToggleButton) findViewById(R.id.toggle_normal);
         toggle_emergency = (ToggleButton) findViewById(R.id.toggle_emergency);
 
@@ -1448,7 +1500,7 @@ public class MainActivity extends AppCompatActivity
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     toggle_emergency.setChecked(false);
-                    soundStart(1,  0);
+                    soundStart(1, 0);
                 } else {
                     soundStop(1);
                 }
@@ -1471,87 +1523,88 @@ public class MainActivity extends AppCompatActivity
         screen_display();
     }
 
-    public boolean soundIsPlaying(){
+    public boolean soundIsPlaying() {
 
-        if (this.mainTimer1 != null){
+        if (this.mainTimer1 != null) {
             return true;
         }
-        if (this.mainTimer2 != null){
+        if (this.mainTimer2 != null) {
             return true;
         }
-        if (this.mainTimer3 != null){
+        if (this.mainTimer3 != null) {
             return true;
         }
         return false;
     }
 
-    public void seekSelect(){
-        //  通常音の音量
-        seek_volume1 = (SeekBar)findViewById(R.id.seek_volume1);
+    public void seekSelect() {
+        // 通常音の音量
+        seek_volume1 = (SeekBar) findViewById(R.id.seek_volume1);
         seek_volume1.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
-                    //ツマミをドラッグした時
+                    // ツマミをドラッグした時
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                         if (soundIsPlaying() == false) {
-                            AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                             db_volume1 = seekBar.getProgress();
                             int tmp_volume = db_volume1;
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                tmp_volume = tmp_volume * 2;  //30段階になったため
+                                tmp_volume = tmp_volume * 2; // 30段階になったため
                             }
                             am.setStreamVolume(AudioManager.STREAM_MUSIC, tmp_volume, 0);
                         }
                         screen_display();
                     }
-                    //ツマミに触れた時
+
+                    // ツマミに触れた時
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
                     }
-                    //ツマミを離した時
+
+                    // ツマミを離した時
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
                     }
-                }
-        );
+                });
     }
 
-    public void spinnerSelect(){
+    public void spinnerSelect() {
 
-        //  スピナー（通常音）
-        sp_sound1 = (Spinner)findViewById(R.id.sp_sound1);
+        // スピナー（通常音）
+        sp_sound1 = (Spinner) findViewById(R.id.sp_sound1);
         sp_sound1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            //何も選択されなかった時の動作
+            // 何も選択されなかった時の動作
             @Override
             public void onNothingSelected(AdapterView adapterView) {
             }
+
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
-                if (soundIsPlaying() == false){
+                if (soundIsPlaying() == false) {
                     if (isSelectSoundOk(position) == true) {
                         db_normal = position;
-                    }
-                    else{
+                    } else {
                         SelectMissMessage();
                     }
                 }
                 screen_display();
             }
         });
-        //  スピナー（SOS音）
-        sp_sound2 = (Spinner)findViewById(R.id.sp_sound2);
+        // スピナー（SOS音）
+        sp_sound2 = (Spinner) findViewById(R.id.sp_sound2);
         sp_sound2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            //何も選択されなかった時の動作
+            // 何も選択されなかった時の動作
             @Override
             public void onNothingSelected(AdapterView adapterView) {
             }
+
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false) {
                     if (isSelectSoundOk(position) == true) {
                         db_emergency = position;
-                    }
-                    else{
+                    } else {
                         SelectMissMessage();
                     }
                 }
@@ -1559,13 +1612,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //  スピナー（通常ライト）
-        sp_light2 = (Spinner)findViewById(R.id.sp_light2);
+        // スピナー（通常ライト）
+        sp_light2 = (Spinner) findViewById(R.id.sp_light2);
         sp_light2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            //何も選択されなかった時の動作
+            // 何も選択されなかった時の動作
             @Override
             public void onNothingSelected(AdapterView adapterView) {
             }
+
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false) {
@@ -1575,13 +1629,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //  スピナー（再生間隔ライト）
-        sp_interval = (Spinner)findViewById(R.id.sp_interval);
+        // スピナー（再生間隔ライト）
+        sp_interval = (Spinner) findViewById(R.id.sp_interval);
         sp_interval.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            //何も選択されなかった時の動作
+            // 何も選択されなかった時の動作
             @Override
             public void onNothingSelected(AdapterView adapterView) {
             }
+
             @Override
             public void onItemSelected(AdapterView parent, View view, int position, long id) {
                 if (soundIsPlaying() == false) {
@@ -1593,9 +1648,9 @@ public class MainActivity extends AppCompatActivity
         screen_display();
     }
 
-    public void soundSelect(int type){
+    public void soundSelect(int type) {
 
-        switch (type){
+        switch (type) {
             default:
                 this.countText = null;
             case 0:
@@ -1663,13 +1718,13 @@ public class MainActivity extends AppCompatActivity
 
     public boolean isSelectSoundOk(int s_data) {
 
-        if (s_data == 7 || s_data == 8){
-            if (db_data3 <= 0){
+        if (s_data == 7 || s_data == 8) {
+            if (db_data3 <= 0) {
                 return false;
             }
         }
-        if (s_data == 9 || s_data == 10){
-            if (db_data3 <= 1){
+        if (s_data == 9 || s_data == 10) {
+            if (db_data3 <= 1) {
                 return false;
             }
         }
@@ -1681,14 +1736,13 @@ public class MainActivity extends AppCompatActivity
         String mess = "";
         if (_language.equals("ja")) {
             mess = "【現在は選択できません】報酬動画を視聴すると選ぶことができます";
-        }
-        else{
+        } else {
             mess = "[Currently unavailable] You can select it by watching the reward video.";
         }
         Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
     }
 
-    //TODO:lock画面
+    // TODO:lock画面
     // ロック開始（ボタンなどから呼び出す用）
     public void startLockMode(View view) {
         // 1. 画面を常時点灯に固定
@@ -1705,8 +1759,7 @@ public class MainActivity extends AppCompatActivity
         String mess = "";
         if (_language.equals("ja")) {
             mess = "画面を【ロック】しました";
-        }
-        else{
+        } else {
             mess = "The screen has been locked";
         }
         Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
@@ -1726,16 +1779,16 @@ public class MainActivity extends AppCompatActivity
         lockOverlay.setVisibility(View.GONE);
     }
 
-    //TODO:ダイアログ
+    // TODO:ダイアログ
     /*
-    public void showStylishPopup(String title,
-                                 String message,
-                                 String okText,
-                                 String cancelText,
-                                 final Runnable onConfirm) {
-
+     * public void showStylishPopup(String title,
+     * String message,
+     * String okText,
+     * String cancelText,
+     * final Runnable onConfirm) {
+     * 
      */
-    public void showStylishPopup(){
+    public void showStylishPopup() {
         String str_message = "";
         String str_title = "";
         String str_btn_yes = "";
@@ -1749,27 +1802,26 @@ public class MainActivity extends AppCompatActivity
         Button btn_cancel = dialogView.findViewById(R.id.btn_cancel);
         Button btn_ok = dialogView.findViewById(R.id.btn_ok);
 
-        //ユーザーレベル算出
+        // ユーザーレベル算出
         if (_language.equals("ja")) {
             str_title += "追加オプション";
             str_message += "\n\n広告動画を視聴して[報酬]を得ますか？" +
-                    "\n [報酬]は以下になります"+
+                    "\n [報酬]は以下になります" +
                     "\n\n\n 1回視聴 [爆竹／花火]" +
-                    "\n 2回視聴 [狼遠吠え／ﾍﾟｯﾄﾎﾞﾄﾙ]"+
-                    "\n 3回視聴 [全面広告表示が微減]"+
-                    "\n\n\n 現在の視聴回数 : "+db_data3+"回"+"\n\n\n\n";
+                    "\n 2回視聴 [狼遠吠え／ﾍﾟｯﾄﾎﾞﾄﾙ]" +
+                    "\n 3回視聴 [全面広告表示が微減]" +
+                    "\n\n\n 現在の視聴回数 : " + db_data3 + "回" + "\n\n\n\n";
 
             str_btn_yes += "視聴";
             str_btn_no += "中止";
-        }
-        else{
+        } else {
             str_title += "Additional options";
             str_message += "\n\nWould you like to watch an ad video and receive [reward]?" +
                     "\n [Reward] Please check the following" +
                     "\n\n\n 1 view [Firecrackers/Fireworks]" +
-                    "\n 2 views [Wolf Howl/Bottle]"+
-                    "\n 3 views [decrease in full-page ads]"+
-                    "\n\n\n Current number of views [ "+db_data3+" ]"+"\n\n\n\n";
+                    "\n 2 views [Wolf Howl/Bottle]" +
+                    "\n 3 views [decrease in full-page ads]" +
+                    "\n\n\n Current number of views [ " + db_data3 + " ]" + "\n\n\n\n";
 
             str_btn_yes += "YES";
             str_btn_no += "N O";
