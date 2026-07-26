@@ -158,6 +158,15 @@
     <string name="sos_volume_title">SOS音量最大</string>
     <string name="sos_volume_summary">SOS音量を最大にします（音量バーの設定に関係なく最大音量にします）</string>
 
+    <string name="sos_email_title">SOS通知メール送信先</string>
+    <string name="sos_email_summary">SOSモード起動時に現在地を送信するメールアドレスを登録します</string>
+    <string name="sos_email_dialog">送信先メールアドレス</string>
+
+    <string name="sos_email_enabled_title">SOS時に現在地メール送信</string>
+    <string name="sos_email_enabled_summary">SOSモード起動時に、下記の送信先へ現在地メールを自動作成します（チェックを外すと送信されません）</string>
+
+    <string name="gps_status_title">位置情報ステータス</string>
+
     <string-array name="list_sound1">
         <item>通常音:---</item>
         <item>鈴音1</item>

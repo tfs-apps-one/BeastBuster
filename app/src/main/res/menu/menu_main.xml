@@ -10,9 +10,16 @@
         app:showAsAction="never" />
         -->
     <item
+        android:id="@+id/action_gps"
+        android:orderInCategory="90"
+        android:icon="@drawable/ic_gps_off"
+        android:title="@string/gps_status_title"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:icon="@drawable/setting"
+        android:icon="@drawable/ic_settings"
         android:title=""
         app:showAsAction="always" />
 

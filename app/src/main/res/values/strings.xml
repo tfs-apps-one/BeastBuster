@@ -166,6 +166,15 @@
     <string name="sos_volume_title">SOS Volume Maximum</string>
     <string name="sos_volume_summary">Sets the SOS volume to maximum (regardless of the volume bar setting)</string>
 
+    <string name="sos_email_title">SOS Notification Email</string>
+    <string name="sos_email_summary">Register the email address that will receive your location when SOS mode is activated</string>
+    <string name="sos_email_dialog">Destination Email Address</string>
+
+    <string name="sos_email_enabled_title">Send Location Email on SOS</string>
+    <string name="sos_email_enabled_summary">Automatically draft a location email to the address below when SOS mode is activated (uncheck to disable)</string>
+
+    <string name="gps_status_title">Location Status</string>
+
     <string-array name="list_sound1">
         <item>Normal Sound</item>
         <item>BELL 1</item>

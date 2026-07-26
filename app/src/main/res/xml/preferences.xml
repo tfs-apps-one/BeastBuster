@@ -77,6 +77,19 @@
         android:title="@string/sos_volume_title"
         android:summary="@string/sos_volume_summary" />
 
+    <CheckBoxPreference
+        android:key="sos_email_send_enabled"
+        android:title="@string/sos_email_enabled_title"
+        android:summary="@string/sos_email_enabled_summary"
+        android:defaultValue="true" />
+
+    <EditTextPreference
+        android:key="sos_email"
+        android:title="@string/sos_email_title"
+        android:summary="@string/sos_email_summary"
+        android:dialogTitle="@string/sos_email_dialog"
+        android:inputType="textEmailAddress" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

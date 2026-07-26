@@ -93,6 +93,23 @@ import android.widget.ToggleButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.WindowManager;
 
+// Edge-to-Edge（Android 15/16 対応）
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+// SOS時の現在地メール送信用
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.provider.Settings;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.location.LocationManagerCompat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 //public class MainActivity extends AppCompatActivity {
 /*public class MainActivity extends AppCompatActivity
         implements SensorEventListener, RewardedVideoAdListener {*/
@@ -133,6 +150,13 @@ public class MainActivity extends AppCompatActivity
     private boolean isEmergencyMode = false;
     private boolean volume_back = false;
     private boolean sos_volume_max = false;
+
+    // SOS時の現在地メール送信用
+    private String sos_email = "";
+    private boolean sos_email_send_enabled = true;
+    private static final int REQUEST_LOCATION_PERMISSION = 2001;
+    // GPS(位置情報)ステータス表示用
+    private MenuItem gpsMenuItem;
 
     // ライト関連
     private boolean blinking = false;
@@ -251,6 +275,9 @@ public class MainActivity extends AppCompatActivity
         // Toolbar toolbar = findViewById(R.id.toolbar);
         // setSupportActionBar(toolbar);
 
+        // TODO:Edge-to-Edge（Android 15/16でシステムバーとの被りを防止）
+        applyEdgeToEdgeInsets();
+
         // 国設定
         _local = Locale.getDefault();
         _language = _local.getLanguage();
@@ -339,6 +366,23 @@ public class MainActivity extends AppCompatActivity
                 }
                 return true;
             }
+        });
+    }
+
+    /************************************************************
+     * Edge-to-Edge対応
+     * Android 15/16 では画面全体にコンテンツを描画するのが標準動作になり、
+     * android:statusBarColor 等の従来設定は無視される。
+     * ルートビューにシステムバー（ステータスバー／ナビゲーションバー）分の
+     * パディングを動的に付与し、既存UIのボタン等が隠れないようにする。
+     ************************************************************/
+    private void applyEdgeToEdgeInsets() {
+        View content = findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(content, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return windowInsets;
         });
     }
 
@@ -532,6 +576,10 @@ public class MainActivity extends AppCompatActivity
          * screen_type = Integer.parseInt(str6);
          */
         sos_volume_max = sharedPreferences.getBoolean("sos_volume_max", false);
+        // SOS通知メール送信先
+        sos_email = sharedPreferences.getString("sos_email", "");
+        // SOS時の現在地メール送信 有効/無効
+        sos_email_send_enabled = sharedPreferences.getBoolean("sos_email_send_enabled", true);
 
         // センサ監視起動
         this.emerTimer = new Timer();
@@ -975,6 +1023,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        gpsMenuItem = menu.findItem(R.id.action_gps);
+        updateGpsMenuIcon();
         return true;
     }
 
@@ -989,7 +1039,51 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.action_gps) {
+            onGpsMenuTapped();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    /* 位置情報(GPS)が有効かどうかを判定 */
+    private boolean isLocationEnabled() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (lm == null) {
+            return false;
+        }
+        return LocationManagerCompat.isLocationEnabled(lm);
+    }
+
+    /* アクションバーのGPSアイコンを現在の状態に合わせて更新 */
+    private void updateGpsMenuIcon() {
+        if (gpsMenuItem == null) {
+            return;
+        }
+        boolean enabled = isLocationEnabled();
+        gpsMenuItem.setIcon(enabled ? R.drawable.ic_gps_on : R.drawable.ic_gps_off);
+        String title;
+        if (_language.equals("ja")) {
+            title = enabled ? "位置情報：有効" : "位置情報：無効（タップして設定）";
+        } else {
+            title = enabled ? "Location: ON" : "Location: OFF (tap to enable)";
+        }
+        gpsMenuItem.setTitle(title);
+    }
+
+    /* GPSアイコンタップ時の処理：無効な場合は設定画面を開いて有効化を促す */
+    private void onGpsMenuTapped() {
+        if (isLocationEnabled()) {
+            String mess = _language.equals("ja") ? "位置情報は有効です" : "Location is already enabled";
+            Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            } catch (ActivityNotFoundException e) {
+                // 端末に位置情報設定画面が無い場合は何もしない
+            }
+        }
     }
 
     @Override
@@ -1198,6 +1292,10 @@ public class MainActivity extends AppCompatActivity
                 SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_NORMAL);
+
+        // GPS(位置情報)ステータス表示の更新
+        updateGpsMenuIcon();
+
         // 動画
         // mRewardedVideoAd.resume(this);
 
@@ -1513,6 +1611,8 @@ public class MainActivity extends AppCompatActivity
                 if (isChecked) {
                     toggle_normal.setChecked(false);
                     soundStart(3, 0);
+                    // SOSモード起動時：現在地メールを送信
+                    sendSosLocationEmail();
                 } else {
                     soundStop(2);
                 }
@@ -1861,5 +1961,129 @@ public class MainActivity extends AppCompatActivity
         });
 
         alertDialog.show();
+    }
+
+    /****************************************************
+     * SOS時：現在地付きメール送信処理
+     ***************************************************/
+
+    /* SOSモード起動時のエントリポイント */
+    private void sendSosLocationEmail() {
+        if (sos_email_send_enabled == false) {
+            // 設定でOFFにされている場合は何もしない
+            return;
+        }
+        if (sos_email == null || sos_email.trim().isEmpty()) {
+            // 送信先メール未登録の場合は何もしない（設定画面で登録可能）
+            return;
+        }
+
+        boolean hasFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+        boolean hasCoarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+
+        if (!hasFine && !hasCoarse) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION);
+            // 初回は権限確認のみ。許可されれば onRequestPermissionsResult で自動的に再送信します
+            return;
+        }
+
+        Location location = getBestLastKnownLocation();
+        if (location == null) {
+            String mess = _language.equals("ja")
+                    ? "現在地を取得できませんでした（GPS/位置情報をONにしてください）"
+                    : "Could not get current location (please turn on GPS/Location)";
+            Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        composeSosEmail(location);
+    }
+
+    /* 端末が保持している最新の位置情報を取得（新規測位は待たず即応性を優先） */
+    private Location getBestLastKnownLocation() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (lm == null) {
+            return null;
+        }
+        Location best = null;
+        try {
+            Location gps = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location network = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (gps != null && network != null) {
+                best = (gps.getTime() >= network.getTime()) ? gps : network;
+            } else if (gps != null) {
+                best = gps;
+            } else {
+                best = network;
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return best;
+    }
+
+    /* メールアプリを起動し、件名・本文を自動入力（最後の送信操作はユーザーが行う） */
+    private void composeSosEmail(Location location) {
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        String mapUrl = "https://maps.google.com/?q=" + lat + "," + lng;
+        String nowStr = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        String subject;
+        String body;
+        if (_language.equals("ja")) {
+            subject = "【" + getString(R.string.app_name) + "】SOS発報：現在地のお知らせ";
+            body = "緊急SOSモードが起動されました。\n\n"
+                    + "■発生日時\n" + nowStr + "\n\n"
+                    + "■現在地（緯度・経度）\n" + lat + ", " + lng + "\n\n"
+                    + "■地図で見る\n" + mapUrl + "\n\n"
+                    + "----------------------------------------\n"
+                    + "このメールは「" + getString(R.string.app_name) + "」アプリからSOSモード起動時に自動作成されました。\n"
+                    + "内容を確認し、そのまま送信してください。";
+        } else {
+            subject = "[" + getString(R.string.app_name) + "] SOS Alert: Current Location";
+            body = "Emergency SOS mode has been activated.\n\n"
+                    + "Time: " + nowStr + "\n\n"
+                    + "Location (Lat, Lng): " + lat + ", " + lng + "\n\n"
+                    + "View on map: " + mapUrl + "\n\n"
+                    + "----------------------------------------\n"
+                    + "This email was auto-generated by the \"" + getString(R.string.app_name) + "\" app when SOS mode was activated.\n"
+                    + "Please review and send.";
+        }
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{sos_email});
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            String mess = _language.equals("ja") ? "メールアプリが見つかりませんでした" : "No email app found";
+            Toast.makeText(this, mess, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            boolean granted = false;
+            for (int result : grantResults) {
+                if (result == PackageManager.PERMISSION_GRANTED) {
+                    granted = true;
+                    break;
+                }
+            }
+            // 許可された時点でまだSOSモード中であれば、続けて送信を試みる
+            if (granted && toggle_emergency != null && toggle_emergency.isChecked()) {
+                sendSosLocationEmail();
+            }
+        }
     }
 }
